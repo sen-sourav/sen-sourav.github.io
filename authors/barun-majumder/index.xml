@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Barun Majumder | Academic</title>
+    <link>https://sen-sourav.github.io/authors/barun-majumder/</link>
+      <atom:link href="https://sen-sourav.github.io/authors/barun-majumder/index.xml" rel="self" type="application/rss+xml" />
+    <description>Barun Majumder</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sun, 01 Jan 2012 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://sen-sourav.github.io/img/icon-192.png</url>
+      <title>Barun Majumder</title>
+      <link>https://sen-sourav.github.io/authors/barun-majumder/</link>
+    </image>
+    
+    <item>
+      <title>Do the modified uncertainty principle and polymer quantization predict same physics?</title>
+      <link>https://sen-sourav.github.io/publication/majumder-2012-modified/</link>
+      <pubDate>Sun, 01 Jan 2012 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/majumder-2012-modified/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

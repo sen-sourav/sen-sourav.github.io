@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>J. Proudfoot | Academic</title>
+    <link>https://sen-sourav.github.io/authors/j.-proudfoot/</link>
+      <atom:link href="https://sen-sourav.github.io/authors/j.-proudfoot/index.xml" rel="self" type="application/rss+xml" />
+    <description>J. Proudfoot</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Wed, 01 May 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://sen-sourav.github.io/img/icon-192.png</url>
+      <title>J. Proudfoot</title>
+      <link>https://sen-sourav.github.io/authors/j.-proudfoot/</link>
+    </image>
+    
+    <item>
+      <title>Studies of granularity of a hadronic calorimeter for tens-of-TeV jets at a 100 TeV pp collider</title>
+      <link>https://sen-sourav.github.io/publication/yeh-2019/</link>
+      <pubDate>Wed, 01 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/yeh-2019/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Jet Substructure Variables with the SiFCC Detector at 100 TeV</title>
+      <link>https://sen-sourav.github.io/publication/yeh-2018-ujb/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/yeh-2018-ujb/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

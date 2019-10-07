@@ -5,12 +5,76 @@
     <link>https://sen-sourav.github.io/</link>
       <atom:link href="https://sen-sourav.github.io/index.xml" rel="self" type="application/rss+xml" />
     <description>Academic</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Wed, 01 May 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://sen-sourav.github.io/img/icon-192.png</url>
       <title>Academic</title>
       <link>https://sen-sourav.github.io/</link>
     </image>
+    
+    <item>
+      <title>Studies of granularity of a hadronic calorimeter for tens-of-TeV jets at a 100 TeV pp collider</title>
+      <link>https://sen-sourav.github.io/publication/yeh-2019/</link>
+      <pubDate>Wed, 01 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/yeh-2019/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Measurements of gluon-gluon fusion and vector-boson fusion Higgs boson production cross-sections in the $H to WW^*to eν μν$ decay channel in pp collisions at $sqrts=$13TeV with the ATLAS detector</title>
+      <link>https://sen-sourav.github.io/publication/2019508/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/2019508/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Jet Substructure Variables with the SiFCC Detector at 100 TeV</title>
+      <link>https://sen-sourav.github.io/publication/yeh-2018-ujb/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/yeh-2018-ujb/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Detectors for Superboosted $τ $-leptons at Future Circular Colliders</title>
+      <link>https://sen-sourav.github.io/publication/sen-2017-detectors/</link>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/sen-2017-detectors/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Initial performance studies of a general-purpose detector for multi-TeV physics at a 100 TeV pp collider</title>
+      <link>https://sen-sourav.github.io/publication/chekanov-2017-initial/</link>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/chekanov-2017-initial/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Study Of Boosted W-Jets And Higgs-Jets With the SiFCCDetector</title>
+      <link>https://sen-sourav.github.io/publication/yu-2017-study/</link>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/yu-2017-study/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Implications of nonlinearity for spherically symmetric accretion</title>
+      <link>https://sen-sourav.github.io/publication/sen-2014-implications/</link>
+      <pubDate>Wed, 01 Jan 2014 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/sen-2014-implications/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Do the modified uncertainty principle and polymer quantization predict same physics?</title>
+      <link>https://sen-sourav.github.io/publication/majumder-2012-modified/</link>
+      <pubDate>Sun, 01 Jan 2012 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/majumder-2012-modified/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

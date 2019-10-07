@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ATLAS Collaboration | Academic</title>
+    <link>https://sen-sourav.github.io/authors/atlas-collaboration/</link>
+      <atom:link href="https://sen-sourav.github.io/authors/atlas-collaboration/index.xml" rel="self" type="application/rss+xml" />
+    <description>ATLAS Collaboration</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Tue, 01 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://sen-sourav.github.io/img/icon-192.png</url>
+      <title>ATLAS Collaboration</title>
+      <link>https://sen-sourav.github.io/authors/atlas-collaboration/</link>
+    </image>
+    
+    <item>
+      <title>Measurements of gluon-gluon fusion and vector-boson fusion Higgs boson production cross-sections in the $H to WW^*to eν μν$ decay channel in pp collisions at $sqrts=$13TeV with the ATLAS detector</title>
+      <link>https://sen-sourav.github.io/publication/2019508/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/publication/2019508/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
