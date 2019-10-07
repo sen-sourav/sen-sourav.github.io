@@ -1,7 +1,7 @@
 ---
 title: "Studies of granularity of a hadronic calorimeter for tens-of-TeV jets at a 100 TeV pp collider"
 date: 2019-05-01
-publishDate: 2019-10-07T07:09:41.959884Z
+publishDate: 2019-10-07T07:19:56.744169Z
 authors: ["C. H. Yeh", "S. V. Chekanov", "A. V. Kotwal", "J. Proudfoot", "S. Sen", "N. V. Tran", "S. S. Yu"]
 publication_types: ["2"]
 abstract: ""
