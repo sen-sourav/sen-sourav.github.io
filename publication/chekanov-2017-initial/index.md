@@ -1,7 +1,7 @@
 ---
 title: "Initial performance studies of a general-purpose detector for multi-TeV physics at a 100 TeV pp collider"
 date: 2017-01-01
-publishDate: 2019-10-07T07:19:56.743624Z
+publishDate: 2019-10-07T07:22:43.241481Z
 authors: ["SV Chekanov", "M Beydler", "AV Kotwal", "L Gray", "S Sen", "NV Tran", "S-S Yu", "J Zuzelski"]
 publication_types: ["2"]
 abstract: ""

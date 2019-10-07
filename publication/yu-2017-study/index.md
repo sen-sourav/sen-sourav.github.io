@@ -1,7 +1,7 @@
 ---
 title: "Study Of Boosted W-Jets And Higgs-Jets With the SiFCCDetector"
 date: 2017-01-01
-publishDate: 2019-10-07T07:19:56.743902Z
+publishDate: 2019-10-07T07:22:43.241713Z
 authors: ["Shin-shan Yu", "Sergei Chekanov", "Lindsey Gray", "Ashutosh Kotwal", "Sourav Sen", "Nhan Tran"]
 publication_types: ["1"]
 abstract: ""
