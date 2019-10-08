@@ -1,5 +1,5 @@
 ---
-title: "Measurements of gluon-gluon fusion and vector-boson fusion Higgs boson production cross-sections in the $H to WW^*to eν μν$ decay channel in pp collisions at $sqrts=$13TeV with the ATLAS detector"
+title: "Measurements of gluon-gluon fusion and vector-boson fusion Higgs boson production cross-sections in the $H \rightarrow WW^*\to eν μν$ decay channel in pp collisions at $sqrts=$13TeV with the ATLAS detector"
 date: 2019-01-01
 publishDate: 2019-10-07T07:22:43.240657Z
 authors: ["ATLAS Collaboration"]
