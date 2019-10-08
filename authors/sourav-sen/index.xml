@@ -5,7 +5,7 @@
     <link>https://sen-sourav.github.io/authors/sourav-sen/</link>
       <atom:link href="https://sen-sourav.github.io/authors/sourav-sen/index.xml" rel="self" type="application/rss+xml" />
     <description>Sourav Sen</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Wed, 23 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Thu, 27 Jul 2017 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://sen-sourav.github.io/img/icon-192.png</url>
       <title>Sourav Sen</title>
@@ -13,10 +13,10 @@
     </image>
     
     <item>
-      <title>Status of improvements in CTIDE Neural Networks</title>
-      <link>https://sen-sourav.github.io/talk/pnp/</link>
-      <pubDate>Wed, 23 Jan 2019 00:00:00 +0000</pubDate>
-      <guid>https://sen-sourav.github.io/talk/pnp/</guid>
+      <title>Effects of reduced pixel charge information in ATLAS tracking</title>
+      <link>https://sen-sourav.github.io/talk/usatlas17/</link>
+      <pubDate>Thu, 27 Jul 2017 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/talk/usatlas17/</guid>
       <description></description>
     </item>
     
@@ -33,6 +33,14 @@
       <link>https://sen-sourav.github.io/publication/yu-2017-study/</link>
       <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
       <guid>https://sen-sourav.github.io/publication/yu-2017-study/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Detectors for Superboosted tau-leptons at Future Circular Colliders</title>
+      <link>https://sen-sourav.github.io/talk/ichep16/</link>
+      <pubDate>Sat, 06 Aug 2016 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/talk/ichep16/</guid>
       <description></description>
     </item>
     
