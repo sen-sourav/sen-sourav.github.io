@@ -5,12 +5,20 @@
     <link>https://sen-sourav.github.io/authors/sourav-sen/</link>
       <atom:link href="https://sen-sourav.github.io/authors/sourav-sen/index.xml" rel="self" type="application/rss+xml" />
     <description>Sourav Sen</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sun, 01 Jan 2017 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Wed, 23 Jan 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://sen-sourav.github.io/img/icon-192.png</url>
       <title>Sourav Sen</title>
       <link>https://sen-sourav.github.io/authors/sourav-sen/</link>
     </image>
+    
+    <item>
+      <title>Status of improvements in CTIDE Neural Networks</title>
+      <link>https://sen-sourav.github.io/talk/pnp/</link>
+      <pubDate>Wed, 23 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/talk/pnp/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Detectors for Superboosted $τ $-leptons at Future Circular Colliders</title>
