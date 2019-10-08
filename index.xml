@@ -1,16 +1,1923 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Academic</title>
+    <title>Sourav&#39;s</title>
     <link>https://sen-sourav.github.io/</link>
       <atom:link href="https://sen-sourav.github.io/index.xml" rel="self" type="application/rss+xml" />
-    <description>Academic</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Wed, 01 May 2019 00:00:00 +0000</lastBuildDate>
+    <description>Sourav&#39;s</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Tue, 08 Oct 2019 01:27:10 -0400</lastBuildDate>
     <image>
       <url>https://sen-sourav.github.io/img/icon-192.png</url>
-      <title>Academic</title>
+      <title>Sourav&#39;s</title>
       <link>https://sen-sourav.github.io/</link>
     </image>
+    
+    <item>
+      <title>Postdoc Success Indicator</title>
+      <link>https://sen-sourav.github.io/project/postdocsuccess/</link>
+      <pubDate>Tue, 08 Oct 2019 01:27:10 -0400</pubDate>
+      <guid>https://sen-sourav.github.io/project/postdocsuccess/</guid>
+      <description>
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;%%HTML
+&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
+table.dataframe td, table.dataframe th {
+    border: 1px  black solid !important;
+  color: black !important;
+}
+&amp;lt;/style&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;style type=&#34;text/css&#34;&gt;
+table.dataframe td, table.dataframe th {
+    border: 1px  black solid !important;
+  color: black !important;
+}
+&lt;/style&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://phdcomics.com/comics/archive/phd082313s.gif&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;As an experimental High Energy Physics (hep-ex) grad student, I often wonder which university/national lab should I choose for doing a postdoc to increase my odds of getting a faculty position, if I plan to stay in academia. But unlike other sub-fields in Physics, we have huge world-wide collaborations for hep-ex experiments like the Large Hadron Collider. In such collaborative environment, it is not very clear if it really matters where one does his/her postdoc, in terms of finding an academic faculty (research scientist) position. It might not be hard to convince oneself that there is actually no such correlation between a postdoc&amp;rsquo;s affiliation and possibility of finding an academic job (faculty position) eventually. This has prompted me to put this hypothesis to test. So, let&amp;rsquo;s explore here whether such a correlation between a postdoc&amp;rsquo;s affiliation and future success in finding an academic faculty position in hep-ex exists.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import re
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from sklearn.linear_model import LogisticRegression
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;data-collection&#34;&gt;Data collection&lt;/h2&gt;
+
+&lt;p&gt;hepexrumor (&lt;a href=&#34;https://sites.google.com/site/hepexrumor/&#34; target=&#34;_blank&#34;&gt;https://sites.google.com/site/hepexrumor/&lt;/a&gt;) is a popular unofficial site which has latest rumors about the hep-ex jobs (in the US and ouside). I parse this website for getting the job rumors from 2005-2019. For this short study, I did not consider temporal variation in job patterns and combined the data of all the years.&lt;/p&gt;
+
+&lt;p&gt;I use the latest affiliation of a postdoc while applying for job. I only consider the postdocs who cleared the short-list round for a job as the total candidate pool, with a presumptuous assumption that postdocs not clearing the shortlist were not serious candidates for the job.&lt;/p&gt;
+
+&lt;p&gt;Parsing hepexrumor:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;hepexjobsite = &#39;https://sites.google.com/site/hepexrumor/&#39;
+year = {2005: &#39;2005-rumor&#39;  ,
+        2006: &#39;2006-rumor&#39;  ,
+        2007: &#39;2007-rumor&#39;  ,
+        2008: &#39;2008-rumor&#39;  ,
+        2009: &#39;2009-rumor-1&#39;,
+        2010: &#39;2009-rumor&#39;  ,
+        2011: &#39;2011-rumors&#39; ,
+        2012: &#39;2012-rumors&#39; ,
+        2013: &#39;2013-rumors&#39; ,
+        2014: &#39;2014-rumors&#39; ,
+        2015: &#39;2015-rumors&#39; ,
+        2016: &#39;2016-rumors&#39; ,
+        2017: &#39;2016-2017&#39;   ,
+        2018: &#39;2018-rumors&#39; ,
+        2019: &#39;2019-rumors&#39; }
+df = {}
+for i in range(2005,2020):
+    p = pd.read_html(hepexjobsite+year[i])
+    print(i, len(p))
+    if (i &amp;lt; 2016 ):
+        tUS = p[3].iloc[1:]
+        tUS.columns = p[3].iloc[0]
+    else:
+        tnonUS = p[4].iloc[1:]
+        tnonUS.columns = p[4].iloc[0]
+        tnonUS = tnonUS.drop(columns=[&#39;Field&#39;])
+        tUS = p[5].iloc[1:]
+        tUS.columns = p[5].iloc[0]
+        tUS = tUS.drop(columns=[&#39;Field&#39;])
+        tUS.append(tnonUS, ignore_index=True)
+    tUS.columns = [&amp;quot;Institution&amp;quot;, &amp;quot;Short List&amp;quot;, &amp;quot;Offers&amp;quot;]
+    df[i] = tUS
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;2005 4
+2006 4
+2007 4
+2008 4
+2009 4
+2010 4
+2011 4
+2012 4
+2013 4
+2014 4
+2015 4
+2016 6
+2017 6
+2018 6
+2019 6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;df[2017].head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Institution&lt;/th&gt;
+      &lt;th&gt;Short List&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;Nebraska&lt;/td&gt;
+      &lt;td&gt;Jamie Antonelli (Ohio State) [CMS] Clemens Lan...&lt;/td&gt;
+      &lt;td&gt;Frank Golf (accepted)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;Wilson Fellowship&lt;/td&gt;
+      &lt;td&gt;Joseph Zennamo (Chicago) [MicroBooNE, SBND] Mi...&lt;/td&gt;
+      &lt;td&gt;Minerba Betancourt (accepted) Nhan Tran (accep...&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;Alabama&lt;/td&gt;
+      &lt;td&gt;Carl Pfendner (Ohio State) [ARA, EVA]&lt;/td&gt;
+      &lt;td&gt;NaN&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;Cornell (accelerators)&lt;/td&gt;
+      &lt;td&gt;NaN&lt;/td&gt;
+      &lt;td&gt;NaN&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;Brookhaven&lt;/td&gt;
+      &lt;td&gt;John Alison (Chicago) [ATLAS] Viviana Cavalier...&lt;/td&gt;
+      &lt;td&gt;Viviana Cavaliere (accepted)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;data-cleaning&#34;&gt;Data cleaning&lt;/h2&gt;
+
+&lt;p&gt;There is ambiguity associated to the names of some of the universities and labs, like Fermilab is listed as &amp;lsquo;Fermilab&amp;rsquo; in some places and &amp;lsquo;FNAL&amp;rsquo; elsewhere. The function below removes this ambiguity by replacing the ambiguous names to a standard name for the organizations:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def UniNameAmbiguityFix(dfk): 
+    Uni_name_ambiguity = {&#39;Argonne&#39;: &#39;ANL&#39;,
+                          &#39;Boston University&#39;: &#39;Boston U&#39;,
+                          &#39;BU&#39;: &#39;Boston U&#39;,
+                          &#39;Brown University&#39;: &#39;Brown&#39;,
+                          &#39;Cal Tech&#39;: &#39;Caltech&#39;,
+                          &#39;Carnegie&#39;: &#39;Carnegie Mellon&#39;,
+                          &#39;Colorado State University&#39;: &#39;Colorado State&#39;,
+                          &#39;Fermilab&#39;: &#39;FNAL&#39;,
+                          &#39;FNAL/Chicago&#39;: &#39;FNAL&#39;,
+                          &#39;Industry/Fermilab&#39;: &#39;FNAL&#39;,
+                          &#39;Chicago/FNAL&#39;: &#39;FNAL&#39;,
+                          &#39;Göttingen&#39;: &#39;Gottingen&#39;,
+                          &#39;Imperial&#39;: &#39;Imperial College London&#39;,
+                          &#39;Indiana&#39;: &#39;Indiana University&#39;, 
+                          &#39;KSU&#39;: &#39;Kansas State&#39;,
+                          &#39;Los Alamos&#39;: &#39;LANL&#39;,
+                          &#39;LBL&#39;: &#39;LBNL&#39;,
+                          &#39;MSU&#39;: &#39;Michigan State&#39;, 
+                          &#39;Northeastern University&#39;: &#39;Northeastern&#39;,
+                          &#39;Northwestern University&#39;: &#39;Northwestern&#39;,
+                          &#39;OSU&#39;: &#39;Ohio State&#39;,
+                          &#39;SUNY Stony Brook&#39;: &#39;Stony Brook&#39;,
+                          &#39;Texas A&amp;amp;M&#39;: &#39;TAMU&#39;,
+                          &#39;Triumf&#39;: &#39;TRIUMF&#39;,
+                          &#39;U Chicago&#39;: &#39;UChicago&#39;,
+                          &#39;Chicago&#39;: &#39;UChicago&#39;,
+                          &#39;University of Chicago&#39;: &#39;UChicago&#39;,
+                          &#39;Berkeley&#39;: &#39;UC Berkeley&#39;,
+                          &#39;University of Colorado Boulder&#39;: &#39;UC Boulder&#39;,
+                          &#39;CU Boulder&#39;: &#39;UC Boulder&#39;,
+                          &#39;Colorado&#39;: &#39;UC Boulder&#39;,
+                          &#39;Davis&#39;: &#39;UC Davis&#39;,
+                          &#39;Irvine&#39;: &#39;UC Irvine&#39;,
+                          &#39;UCSD&#39;: &#39;UC San Diego&#39;,
+                          &#39;UCSB&#39;: &#39;UC Santa Barbara&#39;,
+                          &#39;UCSC&#39;: &#39;UC Santa Cruz&#39;,
+                          &#39;UIC&#39;: &#39;University of Illinois Chicago&#39;,
+                          &#39;University of Illinois Urbana-Champaign&#39;: &#39;UIUC&#39;,
+                          &#39;University of North Carolina&#39;: &#39;UNC&#39;,
+                          &#39;University of Pennsylvania&#39;: &#39;UPenn&#39;,
+                          &#39;University of Texas Austin&#39;: &#39;UT Austin&#39;, 
+                          &#39;Florida&#39;: &#39;University of Florida&#39;,
+                          &#39;Geneva&#39;: &#39;University of Geneva&#39;,
+                          &#39;Hawaii&#39;: &#39;University of Hawaii&#39;,
+                          &#39;Maryland&#39;: &#39;University of Maryland&#39;, 
+                          &#39;Michigan&#39;: &#39;University of Michigan&#39;,
+                          &#39;Minnesota&#39;: &#39;University of Minnesota&#39;,
+                          &#39;Sheffield&#39;: &#39;University of Sheffield&#39;,
+                          &#39;Victoria&#39;: &#39;University of Victoria&#39;,
+                          &#39;Virginia&#39;: &#39;University of Virginia&#39;,
+                          &#39;Washington&#39;: &#39;University of Washington&#39;,
+                          &#39;University of Wisconsin Madison&#39;: &#39;UW Madison&#39;,
+                          &#39;Wisconsin&#39;: &#39;UW Madison&#39;,
+                          &#39;UW&#39;: &#39;UW Madison&#39;,
+                          &#39;UW-Madison&#39;: &#39;UW Madison&#39;}
+    Uni_name_ambiguity.keys()
+    dfk = dfk.replace({&#39;Affiliation&#39;: Uni_name_ambiguity})
+    dfk = dfk.groupby([&#39;Applicant&#39;, &#39;Affiliation&#39;])[&#39;Attempts&#39;].sum().reset_index()
+    return dfk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;applicant-stats&#34;&gt;Applicant stats&lt;/h3&gt;
+
+&lt;p&gt;Extracting tables for applicant job performance (along with their latest affiliation at the time of job application) from tables for job results.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTable = {}
+for i in range(2005, 2020):
+    attempt = df[i][&#39;Short List&#39;].str.split(&amp;quot;\)&amp;quot;, expand=True)
+    attempt = attempt.unstack()
+    attempt = attempt.str.split(r&amp;quot;\[.*?\]&amp;quot;).str.join(&#39;&#39;)
+    attempt = attempt.str.strip()
+    attempt = attempt.value_counts()
+    attempt = attempt.to_frame()
+    attempt.reset_index(level=0, inplace=True)
+    attempt.columns = [&#39;Applicant&#39;, &#39;Attempts&#39;]
+    attemptTable = attempt[&#39;Applicant&#39;].str.split(&#39;(&#39;, expand=True)
+    attemptTable.columns = [&#39;Applicant&#39;, &#39;Affiliation&#39;]
+    attemptTable[&#39;Attempts&#39;] = attempt[&#39;Attempts&#39;]
+    attemptTable = attemptTable.iloc[1:]
+    indexDrop = attemptTable[attemptTable[&#39;Applicant&#39;].str.contains(&amp;quot;\)&amp;quot; or &amp;quot;\(&amp;quot; or &amp;quot;[&amp;quot; or &amp;quot;]&amp;quot;)].index
+    attemptTable.drop(indexDrop , inplace=True)
+    attemptTable.Affiliation.str.strip()
+    attemptTable = UniNameAmbiguityFix(attemptTable)
+
+    offerTable = df[i][&#39;Offers&#39;].str.split(r&amp;quot;\(.*?\)&amp;quot;, expand=True)
+    offerTable = offerTable.unstack()
+    offerTable = offerTable.str.strip()
+    offerTable = offerTable.value_counts()
+    offerTable = offerTable.to_frame()
+    offerTable.reset_index(level=0, inplace=True)
+    offerTable.columns = [&#39;Applicant&#39;, &#39;Offers&#39;]
+    offerTable[&#39;Applicant&#39;] = offerTable[&#39;Applicant&#39;].str.replace(u&#39;† \xa0&#39;, u&#39;&#39;)
+    offerTable = offerTable.iloc[1:]
+
+    attemptTable.Applicant = attemptTable.Applicant.str.strip()
+    offerTable.Applicant   = offerTable.Applicant.str.strip()
+
+    ApplicantTable[i] = attemptTable.merge(offerTable, how=&#39;left&#39;, left_on=&#39;Applicant&#39;, right_on=&#39;Applicant&#39;)
+    ApplicantTable[i] = ApplicantTable[i].fillna(0)
+    ApplicantTable[i].Offers = ApplicantTable[i].Offers.astype(int)
+    #applicants with no affiliations listed are dropped
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;].str.strip() == &amp;quot;&amp;quot;].index , inplace=True)
+    #blank applicant dropped
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.strip() == &amp;quot;&amp;quot;].index , inplace=True)
+    #theory or non-hep jobs to be dropped
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.lower().str.contains(&#39;theory&#39;)].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.lower().str.contains(&#39;hep&#39;)].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;IAS&#39;].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;theory&#39;].index , inplace=True)
+    #other misc. cleaning
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;notes below&#39;].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;Ultralytics&#39;].index , inplace=True)
+    
+    ApplicantTable[i] = ApplicantTable[i].sort_values(by=[&#39;Offers&#39;, &#39;Attempts&#39;], ascending=False)
+    ApplicantTable[i]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTable[2015].head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;67&lt;/td&gt;
+      &lt;td&gt;Joshua Spitz&lt;/td&gt;
+      &lt;td&gt;MIT&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;Alex Himmel&lt;/td&gt;
+      &lt;td&gt;Duke&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;77&lt;/td&gt;
+      &lt;td&gt;Laura Fields&lt;/td&gt;
+      &lt;td&gt;Northwestern&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;90&lt;/td&gt;
+      &lt;td&gt;Matt Wetstein&lt;/td&gt;
+      &lt;td&gt;UChicago&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;Andrzej Szelc&lt;/td&gt;
+      &lt;td&gt;Yale&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Combining data of all the years. I define a success as getting at least one job offer, ie assign an applicant success = 1. With no offers at all, I define the (short-listed) candidate to be unsuccessful, ie assign the applicant success = 0.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYears = pd.concat(ApplicantTable, ignore_index=True)
+ApplicantTableAllYears = ApplicantTableAllYears.groupby([&#39;Applicant&#39;, &#39;Affiliation&#39;])[&#39;Attempts&#39;, &#39;Offers&#39;].sum().reset_index()
+ApplicantTableAllYears = ApplicantTableAllYears.sort_values(by=[&#39;Offers&#39;, &#39;Attempts&#39;], ascending=False)
+ApplicantTableAllYears[&#39;Success&#39;] = (ApplicantTableAllYears[&#39;Offers&#39;] &amp;gt; 0).astype(int)
+ApplicantTableAllYears
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+      &lt;th&gt;Success&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;219&lt;/td&gt;
+      &lt;td&gt;Florencia Canelli&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;570&lt;/td&gt;
+      &lt;td&gt;Sabine Lammers&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;85&lt;/td&gt;
+      &lt;td&gt;Ben Kilminster&lt;/td&gt;
+      &lt;td&gt;Ohio State&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;114&lt;/td&gt;
+      &lt;td&gt;Carter Hall&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;214&lt;/td&gt;
+      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
+      &lt;td&gt;Rochester&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;678&lt;/td&gt;
+      &lt;td&gt;Yoshikazu Nagai&lt;/td&gt;
+      &lt;td&gt;UC Boulder&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;683&lt;/td&gt;
+      &lt;td&gt;Yusuke Koshio&lt;/td&gt;
+      &lt;td&gt;University of Tokyo&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;685&lt;/td&gt;
+      &lt;td&gt;Zarko Pavlovic&lt;/td&gt;
+      &lt;td&gt;LANL&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;687&lt;/td&gt;
+      &lt;td&gt;Zeynep Demeragli&lt;/td&gt;
+      &lt;td&gt;MIT&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;689&lt;/td&gt;
+      &lt;td&gt;Zhengyun You&lt;/td&gt;
+      &lt;td&gt;UC Irvine&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;693 rows × 5 columns&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&#34;how-to-rank-university-lab-employing-postdocs-in-terms-of-their-postdocs-success&#34;&gt;How to rank University/lab (employing postdocs) in terms of their postdocs success?&lt;/h3&gt;
+
+&lt;p&gt;To assess the average quality of postdocs in an organization (affiliation), I add a Offers/candidate metric. Total offers also give an estimate of the success of the affiliation. I use these two university metrics to rank the universities/labs to produce successful candidates affiliated to them (first priority given to Total Offers, and then to Offers/candidate).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniversityTableAllYears = ApplicantTableAllYears.drop(columns=[&#39;Applicant&#39;, &#39;Attempts&#39;])
+UniversityTableAllYears[&#39;Failure&#39;] = (UniversityTableAllYears[&#39;Offers&#39;] == 0).astype(int)
+UniversityTableAllYears = UniversityTableAllYears.groupby([&#39;Affiliation&#39;])[&#39;Offers&#39;, &#39;Success&#39;, &#39;Failure&#39;].sum().reset_index()
+UniversityTableAllYears[&#39;Offers/candidate&#39;] = UniversityTableAllYears[&#39;Offers&#39;]*1./(UniversityTableAllYears[&#39;Success&#39;] + UniversityTableAllYears[&#39;Failure&#39;])
+UniversityTableAllYears.columns = [&#39;Affiliation&#39;, &#39;Total Offers&#39;, &#39;Total successful candidates&#39;, &#39;Total unsuccessful candidates&#39;, &#39;Offers/candidate&#39;]
+UniversityTableAllYears = UniversityTableAllYears.sort_values(by=[&#39;Total successful candidates&#39;, &#39;Offers/candidate&#39;], ascending=False)
+UniversityTableAllYears[&#39;Rank&#39;] = np.arange(1,150)
+UniversityTableAllYears
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Total Offers&lt;/th&gt;
+      &lt;th&gt;Total successful candidates&lt;/th&gt;
+      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+      &lt;th&gt;Rank&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;32&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;58&lt;/td&gt;
+      &lt;td&gt;39&lt;/td&gt;
+      &lt;td&gt;26&lt;/td&gt;
+      &lt;td&gt;0.892308&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;56&lt;/td&gt;
+      &lt;td&gt;LBNL&lt;/td&gt;
+      &lt;td&gt;23&lt;/td&gt;
+      &lt;td&gt;20&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;0.718750&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;120&lt;/td&gt;
+      &lt;td&gt;UChicago&lt;/td&gt;
+      &lt;td&gt;25&lt;/td&gt;
+      &lt;td&gt;17&lt;/td&gt;
+      &lt;td&gt;10&lt;/td&gt;
+      &lt;td&gt;0.925926&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;CERN&lt;/td&gt;
+      &lt;td&gt;16&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;29&lt;/td&gt;
+      &lt;td&gt;0.363636&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;24&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;19&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1.266667&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;138&lt;/td&gt;
+      &lt;td&gt;University of Sussex&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+      &lt;td&gt;145&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;139&lt;/td&gt;
+      &lt;td&gt;University of Tokyo&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+      &lt;td&gt;146&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;140&lt;/td&gt;
+      &lt;td&gt;University of Victoria&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+      &lt;td&gt;147&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;145&lt;/td&gt;
+      &lt;td&gt;Western Illinois&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+      &lt;td&gt;148&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;146&lt;/td&gt;
+      &lt;td&gt;William and Mary&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+      &lt;td&gt;149&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;149 rows × 6 columns&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Candidates with at least one offer are counted as successful, while ones with no offer are counted as unsuccessful candidates.&lt;/p&gt;
+
+&lt;h2 id=&#34;data-visualization&#34;&gt;Data visualization&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.style.use(&#39;ggplot&#39;)
+x_pos = [i for i, _ in enumerate(UniversityTableAllYears[&#39;Affiliation&#39;].iloc[:5])]
+
+plt.bar(x_pos, UniversityTableAllYears[&#39;Total successful candidates&#39;].iloc[:5], color=&#39;green&#39;)
+plt.xlabel(&amp;quot;Postdoc affiliation&amp;quot;)
+plt.ylabel(&amp;quot;Total successful candidates&amp;quot;)
+plt.title(&amp;quot;Best 5 postdoc affiliations which produced largest number of successful candidates (from 2005-2019)&amp;quot;)
+
+plt.xticks(x_pos, UniversityTableAllYears[&#39;Affiliation&#39;].iloc[:5])
+
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_22_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniversityTableAllYearsBestOfferRate = UniversityTableAllYears.sort_values(by=[&#39;Offers/candidate&#39;], ascending=False)
+
+plt.style.use(&#39;ggplot&#39;)
+x_pos = [i for i, _ in enumerate(UniversityTableAllYearsBestOfferRate[&#39;Affiliation&#39;].iloc[:5])]
+
+plt.bar(x_pos, UniversityTableAllYearsBestOfferRate[&#39;Offers/candidate&#39;].iloc[:5], color=&#39;green&#39;)
+plt.xlabel(&amp;quot;Postdoc affiliation&amp;quot;)
+plt.ylabel(&amp;quot;Avg. offer per candidate&amp;quot;)
+plt.title(&amp;quot;Best 5 postdoc affiliations which have highest offers per candidate (from 2005-2019)&amp;quot;)
+
+plt.xticks(x_pos, UniversityTableAllYearsBestOfferRate[&#39;Affiliation&#39;].iloc[:5])
+
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_23_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;success-of-postdocs-w-r-t-their-affiliation-s-university-lab-s-metrics&#34;&gt;Success of postdocs w.r.t their affiliation&amp;rsquo;s (university/lab&amp;rsquo;s) metrics&lt;/h2&gt;
+
+&lt;p&gt;In addition to the binary metric of at least one offer as success, I add another candidate metric - Success odds. Success odds = (total offers)/(total attempts - total offers) for a candidate. The correlation between candidate metrics and university/lab (affiliation) metrics is of interest, as it gives an intuition about the spead of department&amp;rsquo;s success metrics over its postdocs. Are there some good/bad postdocs who skew their affiliation&amp;rsquo;s (university&amp;rsquo;s) success metric or are all the postdocs in general doing similarly from that university in academic job hunting.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked = ApplicantTableAllYears.merge(UniversityTableAllYears[[&#39;Affiliation&#39;, &#39;Rank&#39;, &#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;, &#39;Total unsuccessful candidates&#39;]], how=&#39;left&#39;, left_on=&#39;Affiliation&#39;, right_on=&#39;Affiliation&#39;)
+ApplicantTableAllYearRanked.rename(columns={&#39;Rank&#39;:&#39;Affiliation rank&#39;}, inplace=True)
+ApplicantTableAllYearRanked[&#39;Success odds&#39;] = ApplicantTableAllYearRanked[&#39;Offers&#39;]/(ApplicantTableAllYearRanked[&#39;Attempts&#39;] - ApplicantTableAllYearRanked[&#39;Offers&#39;])
+ApplicantTableAllYearRanked
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+      &lt;th&gt;Success&lt;/th&gt;
+      &lt;th&gt;Affiliation rank&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+      &lt;th&gt;Total successful candidates&lt;/th&gt;
+      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
+      &lt;th&gt;Success odds&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;Florencia Canelli&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.892308&lt;/td&gt;
+      &lt;td&gt;39&lt;/td&gt;
+      &lt;td&gt;26&lt;/td&gt;
+      &lt;td&gt;0.875&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;Sabine Lammers&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1.266667&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;2.500&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;Ben Kilminster&lt;/td&gt;
+      &lt;td&gt;Ohio State&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;19&lt;/td&gt;
+      &lt;td&gt;0.900000&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;1.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;Carter Hall&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;0.888889&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;4.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
+      &lt;td&gt;Rochester&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;20&lt;/td&gt;
+      &lt;td&gt;0.857143&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;0.500&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+      &lt;td&gt;...&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;688&lt;/td&gt;
+      &lt;td&gt;Yoshikazu Nagai&lt;/td&gt;
+      &lt;td&gt;UC Boulder&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;34&lt;/td&gt;
+      &lt;td&gt;0.500000&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;0.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;689&lt;/td&gt;
+      &lt;td&gt;Yusuke Koshio&lt;/td&gt;
+      &lt;td&gt;University of Tokyo&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;146&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;690&lt;/td&gt;
+      &lt;td&gt;Zarko Pavlovic&lt;/td&gt;
+      &lt;td&gt;LANL&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;22&lt;/td&gt;
+      &lt;td&gt;0.666667&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;0.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;691&lt;/td&gt;
+      &lt;td&gt;Zeynep Demeragli&lt;/td&gt;
+      &lt;td&gt;MIT&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;0.608696&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;11&lt;/td&gt;
+      &lt;td&gt;0.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;692&lt;/td&gt;
+      &lt;td&gt;Zhengyun You&lt;/td&gt;
+      &lt;td&gt;UC Irvine&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;139&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;0.000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;693 rows × 10 columns&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;success-odds-vs-affiliation-metric&#34;&gt;Success odds vs. Affiliation metric&lt;/h2&gt;
+
+&lt;p&gt;Pearson correlation:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;correlation = ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39; ,&#39;Total successful candidates&#39;, &#39;Affiliation rank&#39;, &#39;Success odds&#39;]]
+correlation.corr()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+      &lt;th&gt;Total successful candidates&lt;/th&gt;
+      &lt;th&gt;Affiliation rank&lt;/th&gt;
+      &lt;th&gt;Success odds&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Offers/candidate&lt;/td&gt;
+      &lt;td&gt;1.000000&lt;/td&gt;
+      &lt;td&gt;0.414271&lt;/td&gt;
+      &lt;td&gt;-0.686715&lt;/td&gt;
+      &lt;td&gt;0.341810&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Total successful candidates&lt;/td&gt;
+      &lt;td&gt;0.414271&lt;/td&gt;
+      &lt;td&gt;1.000000&lt;/td&gt;
+      &lt;td&gt;-0.588940&lt;/td&gt;
+      &lt;td&gt;0.159448&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Affiliation rank&lt;/td&gt;
+      &lt;td&gt;-0.686715&lt;/td&gt;
+      &lt;td&gt;-0.588940&lt;/td&gt;
+      &lt;td&gt;1.000000&lt;/td&gt;
+      &lt;td&gt;-0.235494&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Success odds&lt;/td&gt;
+      &lt;td&gt;0.341810&lt;/td&gt;
+      &lt;td&gt;0.159448&lt;/td&gt;
+      &lt;td&gt;-0.235494&lt;/td&gt;
+      &lt;td&gt;1.000000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Offer/candidate has a higher correlation with success odds.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#Support Vector Regression
+from sklearn.svm import SVR, LinearSVR
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Y = np.array(ApplicantTableAllYearRanked[&#39;Success odds&#39;].astype(float))
+Y = np.nan_to_num(Y)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.scatter(ApplicantTableAllYearRanked[&#39;Affiliation rank&#39;], ApplicantTableAllYearRanked[&#39;Success odds&#39;], alpha=0.5, color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
+plt.xlabel(&#39;Affiliation rank&#39;)
+plt.ylabel(&#39;Success odds&#39;)
+plt.xlim([-0.01,160])
+plt.ylim([-0.01,4.5])
+plt.legend()
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_33_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.scatter(ApplicantTableAllYearRanked[&#39;Total successful candidates&#39;], ApplicantTableAllYearRanked[&#39;Success odds&#39;], alpha=0.5, color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
+plt.xlabel(&#39;Total successful candidates&#39;)
+plt.ylabel(&#39;Success odds&#39;)
+plt.xlim([-1,40])
+plt.ylim([-0.1,4.5])
+plt.legend()
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_34_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.scatter(ApplicantTableAllYearRanked[&#39;Offers/candidate&#39;], ApplicantTableAllYearRanked[&#39;Success odds&#39;], alpha=0.5, color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
+plt.xlabel(&#39;Offers/candidate&#39;)
+plt.ylabel(&#39;Success odds&#39;)
+plt.xlim([-0.1,1.4])
+plt.ylim([-0.1,4.5])
+
+X = np.array(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;]].astype(float))
+X = np.nan_to_num(X)
+
+Z = np.array(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;]].astype(float))
+
+
+svr_linOfferDensity = LinearSVR(random_state=0, tol=1e-5)
+#svr_rbf = SVR(kernel=&#39;rbf&#39;, C=1e3, gamma=0.1)
+
+Y_svrlinOfferDensity = svr_linOfferDensity.fit(X, Y).predict(X)
+#Y_rbf = svr_rbf.fit(Z, Y).predict(Z)
+
+plt.plot(X, Y_svrlinOfferDensity, color=&#39;green&#39;, lw=1, label=&#39;Linear fit (only Offers/candidate)&#39;)
+#plt.plot(X, Y_rbf, color=&#39;black&#39;, lw=1, label=&#39;rbf model&#39;)
+plt.legend()
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_35_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;success-vs-affiliation-metric&#34;&gt;Success vs. Affiliation metric&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked.plot(x=&#39;Affiliation rank&#39;, y=&#39;Success&#39;, style=&#39;.&#39;, alpha = 0.2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76e2cc470&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_37_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked.plot(x=&#39;Total successful candidates&#39;, y=&#39;Success&#39;, style=&#39;o&#39;, alpha = 0.1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76b992fd0&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_38_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;t = ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;, &#39;Success&#39;]]
+t = t.sort_values(by=[&#39;Total successful candidates&#39;], ascending=False)
+tsuccess = t[t[&#39;Success&#39;] == 1]
+tfailure = t[t[&#39;Success&#39;] == 0]
+
+bins=3
+plt.hist(tsuccess[&#39;Total successful candidates&#39;], bins, alpha=0.3, label=&#39;Success&#39;)
+plt.hist(tfailure[&#39;Total successful candidates&#39;], bins, alpha=0.3, label=&#39;Failure&#39;)
+
+plt.xlabel(&#39;Total successful candidates&#39;)
+plt.ylabel(&#39;frequency&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_39_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked.plot(x=&#39;Offers/candidate&#39;, y=&#39;Success&#39;, style=&#39;.&#39;, alpha = 0.2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76b9c8438&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_40_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;t = ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;, &#39;Success&#39;]]
+t = t.sort_values(by=[&#39;Offers/candidate&#39;], ascending=False)
+tsuccess = t[t[&#39;Success&#39;] == 1]
+tfailure = t[t[&#39;Success&#39;] == 0]
+
+bins=3
+plt.hist(tsuccess[&#39;Offers/candidate&#39;], bins, alpha=0.3, label=&#39;Success&#39;)
+plt.hist(tfailure[&#39;Offers/candidate&#39;], bins, alpha=0.3, label=&#39;Failure&#39;)
+
+plt.xlabel(&#39;Offers/candidate&#39;)
+plt.ylabel(&#39;frequency&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_41_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Offer/candidate has a fair discriminating power between success and failure cases.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
+logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+
+
+
+
+
+0.5844155844155844
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
+logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;, &#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;, &#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+
+
+
+
+
+0.6536796536796536
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
+logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+
+
+
+
+
+0.5526695526695526
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
+logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;, &#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;, &#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+
+
+
+
+
+0.6551226551226551
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
+logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
+  FutureWarning)
+
+
+
+
+
+0.6551226551226551
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;lsquo;Total successful candidates&amp;rsquo; metric does not provide any additional discriminating power than &amp;lsquo;Offers/candidate&amp;rsquo; metric.&lt;/p&gt;
+
+&lt;p&gt;To get an intuition of why &amp;lsquo;Offers/candidate&amp;rsquo; metric is a good indicator of postdoc success, let&amp;rsquo;s look at the actual distribution of number of offer of a hep-ex postdoc:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked[&#39;Offers&#39;].hist(bins=10)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76b86f2b0&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_49_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Since most postdocs in hep-ex typically do not receive more than 1 offer, &amp;lsquo;Offers/candidate&amp;rsquo; (ie the avg. number of offers by a postdoc from a given afiliation (university/lab), actually represents the number of successful postdocs of that affiliation.&lt;/p&gt;
+
+&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hence, &amp;lsquo;Offers/candidate&amp;rsquo; is the best metric to indicate if a university/lab produces successful postdocs.&lt;/li&gt;
+&lt;li&gt;According to &amp;lsquo;Offers/candidate&amp;rsquo; metric Columbia University is the best university to do a hep-ex postdoc.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;next-steps&#34;&gt;Next steps&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;temporal variations in hep-ex job market not taken into account&lt;/li&gt;
+&lt;li&gt;US and non-US jobs to be treated separately&lt;/li&gt;
+&lt;li&gt;should separate the study into energy, intensity and cosmic frontiers, as the job trends and funding are different for each&lt;/li&gt;
+&lt;li&gt;think of other metrics&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Detect Language of Transliterated Texts</title>
+      <link>https://sen-sourav.github.io/project/detecttransliterationlanguage/</link>
+      <pubDate>Tue, 08 Oct 2019 01:22:11 -0400</pubDate>
+      <guid>https://sen-sourav.github.io/project/detecttransliterationlanguage/</guid>
+      <description>
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;the-problem&#34;&gt;The problem&lt;/h3&gt;
+
+&lt;p&gt;Below is a text transliterated in English:&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&amp;ldquo;aaj ka mausam achchha hai&amp;rdquo;&lt;/th&gt;
+&lt;th&gt;&amp;ldquo;The weather is good today&amp;rdquo;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;(transliterated text)&lt;/td&gt;
+&lt;td&gt;(translated text)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;One might be curious about what language is this transliterated text actually in (unless one knows that language already). Happens to me quite often, when I&amp;rsquo;m reading Youtube or Facebook or other social media threads.&lt;/p&gt;
+
+&lt;p&gt;Well, the above text is in Hindi:&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&amp;ldquo;aaj ka mausam achchha hai&amp;rdquo;&lt;/th&gt;
+&lt;th&gt;&amp;ldquo;आज का मौसम अच्छा है&amp;rdquo;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;(transliterated text)&lt;/td&gt;
+&lt;td&gt;(original script)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Since computer and phone keyboards are generally in English, it is often convenient for non-roman language speakers to transliterate their texts to English while typing than to use the original script (writing system) of their language. Since the transliterated text does not have the information about its original language, it becomes hard for others (who do not speak that language) to even decipher the language and further understand the meaning of the text.&lt;/p&gt;
+
+&lt;p&gt;It would be convenient if machines could fill this gap by telling us the language of those transliterated texts, which we very often encounter in social media threads etc., so that we don&amp;rsquo;t have to ask other people if they can identify the language of a transliterated text.&lt;/p&gt;
+
+&lt;h3 id=&#34;scope-of-the-project&#34;&gt;Scope of the project&lt;/h3&gt;
+
+&lt;p&gt;In this project, I therefore attempt to address this problem by designing an NLP model which can detect the language of a transliterated text. Due to lack of time at the moment, I confine the scope of this project to just classify texts transliterated from Korean and Bangla (Bengali) languages.&lt;/p&gt;
+
+&lt;p&gt;Although not important, but the reason for choosing these two non-roman languages in particular for the project is because:&lt;br /&gt;
+* Bangla is my mother tongue so it would be fun to teach the machine my language. Bangla (or Bengali) is spoken mostly in the state of West Bengal in India and in Bangladesh.
+* Korean pop songs are popular lately, so considering their international reach, I thought, Korean transliteration might be relevant to people.
+* I shall be including other non-roman languages in the future.&lt;/p&gt;
+
+&lt;h3 id=&#34;solution-approach&#34;&gt;Solution approach&lt;/h3&gt;
+
+&lt;p&gt;We can often identify a language being spoken, if we have prior experience of hearing that language, even if we may not understand the language at all. Every language has some characteristic sounds patterns. These patterns can be used to identify a language even without understanding them. So, like speech, if we know the correct pronounciation of transliterated texts (ie pronounciation in their original langauge), we might be able to identify the language, given we have some prior familiarity with how the language generally sounds.&lt;/p&gt;
+
+&lt;p&gt;Automatic Speech Recognition (ASR) systems are pretty decent in identifying language from speech audio inputs. ASRs use spectrograms (shown below) to learn features of a speech input such as its language.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://www.researchgate.net/profile/Phillip_Lobel/publication/267827408/figure/fig2/AS:295457826852866@1447454043380/Spectrograms-and-Oscillograms-This-is-an-oscillogram-and-spectrogram-of-the-boatwhistle.png&#34;  width=&#34;400&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;[Image source: Kovitvongsa, Kathryn &amp;amp; Lobel, Phillip. (2019). Convenient Fish Acoustic Data Collection in the Digital Age.]&lt;/p&gt;
+
+&lt;p&gt;In spectrograms, audio files are chopped into thin time slices (in the abscissa), and for each time slice, all the frequencies present in it are plotted (in the ordinate) with their corresponding intensities are represented in the heat map, obtained using Fourier transform. The frequencies tell us about the nature of the source that produced that sound, e.g., you can identify musical instruments by the pattern of their overtones (multiples of fundamental frequency).&lt;/p&gt;
+
+&lt;p&gt;So, in spectrograms of human speech audio files, the frequencies in a particular time slice should indicate the part of buccal cavity that produced it. It would be ideal if one knew the time span of each characteristic sound that create the words in a language. However, since that is not known, in spectrograms, the time is sliced into very small intervals, so that the NLP model can join a few of those small time slices and learn the actual length of a particular characteristic sound.&lt;/p&gt;
+
+&lt;p&gt;If we could split our transliterated words into fragments which represent the characteristic sounds, a string of those word fragments would be analogous to spectrograms for audio speech. We can then use those word fragment strings as inputs to an NLP model to identify the language of the transliterated text.&lt;/p&gt;
+
+&lt;p&gt;Fortunately, when a text is transliterated from one langauge to other, it is generally spelled out phonetically (even if the original language is not strictly phonetic). So, if we were to phonetically pronounce the transliterated words, we might be quite closer to its actual pronounciation.&lt;/p&gt;
+
+&lt;p&gt;To get the phonetic pronounciation, we assumed that the texts were transliterated from some unknown language to Italian, a strictly phonetic language which also uses the Latin script as English. We then divide the transliterated words into syllables according to the  Italian language, ie phonetically. We used those (phonetic) syllables as inputs to our NLP model.&lt;/p&gt;
+
+&lt;h1 id=&#34;data-scraping&#34;&gt;Data scraping&lt;/h1&gt;
+
+&lt;p&gt;Song lyrics website often transliterate songs in English (perhaps for international audiences). So, for Korean and Bangla (Bengali) sentences transliterated in English, the song lyrics on the following lyrics websites were scraped:
+ - bangla lyrics: &lt;a href=&#34;http://www.lyricsbangla.com/&#34; target=&#34;_blank&#34;&gt;http://www.lyricsbangla.com/&lt;/a&gt;
+ - korean lyrics: &lt;a href=&#34;https://romanization.wordpress.com/&#34; target=&#34;_blank&#34;&gt;https://romanization.wordpress.com/&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from urllib.request import urlopen
+from bs4 import BeautifulSoup
+import re
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Since the objects in Bengali (referred as Bangla henceforth) and Korean texts might be different created two separate functions to fetch respective text. The different functions are just for cleanliness purpose.&lt;/p&gt;
+
+&lt;h3 id=&#34;functions-for-scraping-korean-transliterated-texts&#34;&gt;Functions for scraping Korean transliterated texts&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def fetch_korean(fname):
+    #some browsing revealed there are 1087 pages (@29th July, 2019) indexed 0 through 1086 with links to lyrics
+    #extracting the song links from each of these pages
+    npages = 1087
+    lyricsbag = open(fname, &#39;w&#39;)
+    count = 0
+    for pg in range(npages):
+        soup = BeautifulSoup(urlopen(&amp;quot;https://romanization.wordpress.com/page/%i&amp;quot;%pg), &#39;html.parser&#39;)
+        links = soup.find_all(&#39;a&#39;)
+        pageurls = [_.get(&#39;href&#39;) for _ in links if (_.text == &#39;Continue reading →&#39;)]
+        for url in pageurls:
+            b = koreanLyrics(url)
+            [lyricsbag.write(_+&amp;quot;\n&amp;quot;) for _ in b]
+            count += 1
+            print(count)
+    
+    return
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def koreanLyrics(url):
+    s = BeautifulSoup(urlopen(url), &#39;html.parser&#39;)
+    lblob = [_.text for _ in s.find_all(&#39;p&#39;)]
+    lyrics = []
+    pendown = False
+    for _ in lblob:
+        if pendown:
+            if (_ == &amp;quot;//&amp;quot;):
+                pendown = False
+                break
+            else:
+                lyrics += _.split(&amp;quot;\n&amp;quot;)
+        else:
+            if &amp;quot;to see the lyrics&amp;quot; in _:
+                pendown = True
+    return lyrics
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;functions-for-scraping-bangla-transliterated-texts&#34;&gt;Functions for scraping Bangla transliterated texts&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def fetch_bangla(fname):
+    #url = &amp;quot;http://www.lyricsbangla.com/?sec=listing&amp;amp;lyricid=4140&amp;quot;
+    url = &amp;quot;file:///home/sourav/MLProjects/transliterate/Lyrics%20Search%20»%20LyricsBangla.com.html&amp;quot; 
+    #TODO replace the static page with dynamic link smh
+    #&amp;quot;http://www.lyricsbangla.com/index.php?sec=search&amp;quot;
+    html = urlopen(url)
+
+    soup = BeautifulSoup(html, &#39;html.parser&#39;)
+    b = soup.find(&#39;table&#39;)
+    urltable = b.find_all(&#39;td&#39;)
+    
+    #extracting songs from links in www.lyricsbangla.com index page
+    lyricsurllist = []
+    lyricsbag = open(fname, &#39;w&#39;)
+    count = 0
+    for u in urltable:
+        if (u.find(&#39;a&#39;) != None):
+            songlink = u.a.get(&#39;href&#39;)
+            if (&amp;quot;artist&amp;quot; not in songlink):
+                b = banglaLyrics(songlink)
+                [lyricsbag.write(_+&amp;quot;\n&amp;quot;) for _ in b]
+                count += 1
+                print(count)
+        
+    return
+    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Bangla lyrics often have chords, so here is a list of chords to clean the text scraped from: &lt;a href=&#34;https://www.pianochord.org/&#34; target=&#34;_blank&#34;&gt;https://www.pianochord.org/&lt;/a&gt; and saved in &amp;ldquo;chords.txt&amp;rdquo;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;##(source: https://www.pianochord.org/)
+def get_musicalchords():
+    chords_ = []
+    f = open(&amp;quot;chords.txt&amp;quot;, &#39;r&#39;)
+    lines = f.readlines()
+    for l in lines:
+        chords_ += l.strip().split()
+
+    return chords_
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def banglaLyrics(url):
+    spchar = re.compile(&#39;[@_!#$%^&amp;amp;*()&amp;lt;&amp;gt;?/\|}{~:]&#39;)
+
+
+    s = BeautifulSoup(urlopen(url), &#39;html.parser&#39;)
+    lblob = s.find(&#39;p&#39;, id=&#39;tabs-1&#39;)
+    lyrics = []
+    chord_ = get_musicalchords()
+    for line in lblob:
+        if (line.string != None):
+            l = str(line)
+            if any(chord in l for chord in chords_):
+                continue
+            elif (spchar.search(l)!=None):
+                continue
+            else:
+                l = l.strip()
+                if (l): lyrics.append(l)
+    return lyrics
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The following cell scrapes Bangla and Korean lyrics respectively using the functions defined above.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;banglacorpus = &amp;quot;banglacorpus.txt&amp;quot;
+fetch_bangla(banglacorpus)
+
+
+koreancorpus = &amp;quot;koreancorpus.txt&amp;quot;
+fetch_korean(koreancorpus)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;data-cleaning&#34;&gt;Data Cleaning&lt;/h1&gt;
+
+&lt;p&gt;&amp;ldquo;cleanedkoreancorpus.txt&amp;rdquo; and &amp;ldquo;cleanedbanglacorpus.txt&amp;rdquo; are the cleaned corpuses for Korean and Bangla transliterated text used for the analysis&lt;/p&gt;
+
+&lt;div style=&#34;text-align: right&#34;&gt; &#34;Cleaning is messy!!&#34; ~Anonymous &lt;/div&gt;
+
+&lt;h1 id=&#34;data-visualization-for-encoding&#34;&gt;Data Visualization for encoding&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+import random
+import pyphen
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;While transliteration, words are spelled phonetically. So, if one spells the transliterated word phonetically, one might actually get quite close to the actual pronounciation in its native language.
+If the transliterated words are, therefore, split into phonetic syllables, a list of those phonetic syllables could represent the pronounciation of that word and thus information about its native language. These phonetic syllables are quite analogous to phoneme sequences used in ASR (Automatic Speech Recognition).&lt;/p&gt;
+
+&lt;p&gt;Since English is not a phonetic language, its syllables are not phonetic. However, with we try to split the word using a phonetic language, like Italian, then the syllables would indeed be phonetic.&lt;/p&gt;
+
+&lt;p&gt;I use a python package - &amp;lsquo;pyphen&amp;rsquo; (&lt;a href=&#34;https://pyphen.org&#34; target=&#34;_blank&#34;&gt;https://pyphen.org&lt;/a&gt;) for such syllable splitting. This package provides an option to choose the language in which the user wants to split the word. As discussed above, I used Italian, a phonetic language, to split the word into syllables, so that I get phonetic syllables.&lt;/p&gt;
+
+&lt;p&gt;The function below splits the words phonetically (as in italian) into list of syllables using Pyphen:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def PhoneticWordSplit(word):
+    dic = pyphen.Pyphen(lang=&#39;it_IT&#39;)
+    splitword = dic.inserted(word)
+    splitword = splitword.replace(&amp;quot;-&amp;quot;, &amp;quot; &amp;quot;)
+    return splitword
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The words split into phonetic syllables are stored in koreanwordbag.txt and banglawordbag.txt for Korean and Bangla resp. and used to train and test the langauge detection model.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def WordBagMaker(corpusfilename, label):
+    f = open(corpusfilename, &#39;r&#39;)
+    lines = f.readlines()
+
+    import random
+    worddict = []
+    for l in lines:
+        words = l.split()
+        #only words present in sentences used, not single word sentences
+        if (len(words) &amp;lt; 2): continue 
+        for w in words:
+            #words with digits not used and single letter words not used
+            if (len(w) &amp;gt; 1) and w.isalpha(): 
+                worddict.append(PhoneticWordSplit(w) + &amp;quot; : &amp;quot; + label)
+    #shuffle the list
+    random.shuffle(worddict)   
+    return worddict
+
+for lang in [&#39;korean&#39;, &#39;bangla&#39;]:
+    fl = open(&amp;quot;%swordbag.txt&amp;quot;%lang, &#39;w&#39;)
+    [fl.write(_+&amp;quot;\n&amp;quot;) for _ in WordBagMaker(&amp;quot;cleaned%scorpus.txt&amp;quot;%lang, &amp;quot;K&amp;quot; if lang==&#39;korean&#39; else &amp;quot;B&amp;quot; )]
+    fl.close()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;datakor = open(&amp;quot;koreanwordbag.txt&amp;quot;, &#39;r&#39;).readlines()
+databan = open(&amp;quot;banglawordbag.txt&amp;quot;, &#39;r&#39;).readlines()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A quick feature visualization to see if simple features, like syllable count per word,have any discriminating power.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def getfeatures(langcorpus):
+    syllables_per_word = []
+    letters_per_syllable = []
+    for d in langcorpus:
+        splitword = d.split(&amp;quot; : &amp;quot;)[0].split(&amp;quot; &amp;quot;)
+        syllables_per_word.append(len(splitword))
+        [letters_per_syllable.append(len(_)) for _ in splitword]
+    return syllables_per_word, letters_per_syllable
+
+syllables_per_wordKOR, letters_per_syllableKOR = getfeatures(datakor)
+
+syllables_per_wordBAN, letters_per_syllableBAN = getfeatures(databan)
+
+syllables_per_word = np.concatenate((syllables_per_wordKOR,syllables_per_wordBAN), axis=0)
+letters_per_syllable = np.concatenate((letters_per_syllableKOR, letters_per_syllableBAN), axis=0)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;binsSPW = [_ - 0.5 for _ in range(1,11)]
+plt.xticks(range(1,11))
+plt.hist(syllables_per_word, binsSPW, alpha=0.3, label=&#39;both languages&#39;)
+plt.hist(syllables_per_wordKOR, binsSPW, alpha=0.3, label=&#39;Korean&#39;) 
+plt.hist(syllables_per_wordBAN, binsSPW, alpha=0.3, label=&#39;Bangla&#39;)
+
+plt.xlabel(&#39;#syllables/word&#39;)
+plt.ylabel(&#39;frequency&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;transliterateLangDetect_34_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Bangla words mostly have 2 syllables, Korean words can have upto 5 syllables in a word. A 10 syllable vector should be enough to encode a word from either language.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;binsLPS = [_ - 0.5 for _ in range(1,11)]
+plt.xticks(range(1,11))
+plt.hist(letters_per_syllable, binsLPS, alpha=0.3, label=&#39;both languages&#39;)
+plt.hist(letters_per_syllableKOR, binsLPS, alpha=0.3, label=&#39;Korean&#39;) 
+plt.hist(letters_per_syllableBAN, binsLPS, alpha=0.3, label=&#39;Bangla&#39;)
+
+plt.xlabel(&#39;#letters/syllables&#39;)
+plt.ylabel(&#39;frequency&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;transliterateLangDetect_36_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Most phonetic syllables have around 2 letters. Not a significant disciminator. Would therefore be fair to disregard the syllable length and just integer encode the syllables in both the corpuses.&lt;/p&gt;
+
+&lt;h1 id=&#34;training-data&#34;&gt;Training data&lt;/h1&gt;
+
+&lt;p&gt;Using 50,000 (10,000) Bangla and Korean words each randomly from the corpuses for training (testing).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Ntrain = 50000
+Ntest  = 10000
+random.shuffle(datakor) #korean
+random.shuffle(databan) #bangla
+TrainingVal_data = datakor[:Ntrain] + databan[:Ntrain] 
+Testing_data = datakor[Ntrain:Ntrain+Ntest] + databan[Ntrain:Ntrain+Ntest]
+random.shuffle(TrainingVal_data)
+random.shuffle(Testing_data)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;word-and-label-encoding&#34;&gt;Word and label encoding&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from keras.preprocessing.text import hashing_trick
+from keras.preprocessing.sequence import pad_sequences
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;vocab_size = 30
+v = [&#39;in in in&#39;, &#39;kab bo&#39;, &#39;so kal&#39;]
+encoded_docs = [hashing_trick(d, vocab_size, hash_function=&#39;md5&#39;) for d in v]
+encoded_docs
+v1 = [&#39;in in bo&#39;]
+encoded_docs1 = [hashing_trick(d, vocab_size, hash_function=&#39;md5&#39;) for d in v1]
+print(encoded_docs1)
+print(encoded_docs)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[[26, 26, 3]]
+[[26, 26, 26], [15, 3], [26, 15]]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from keras.models import Sequential
+from keras.layers import Dense, Embedding, LSTM
+from keras.regularizers import l2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def datalabel(dataset):
+    &#39;&#39;&#39;function to label words &#39;K&#39; or &#39;B&#39; for Korean and Bangla resp. &#39;&#39;&#39;
+    wvec = []
+    lvec = [] 
+    for td in dataset:
+        tw, tl = td.split(&amp;quot; : &amp;quot;)
+        #One hot encoding: [1,0] : Bangla, [0,1] : Korean
+        l = [1, 0] if tl.strip() == &amp;quot;B&amp;quot; else [0,1] 
+        wvec.append(tw)
+        lvec.append(l)
+    return wvec, np.array(lvec)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pipeline to integer encode phonetic syllables and pad words to a max of 10 syllables:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def IntEncodeWords(wordlist):
+    vocab_size = 200000
+    max_length = 10
+    #integer encoding the syllables
+    encoded_words = [hashing_trick(d, vocab_size, hash_function=&#39;md5&#39;) for d in wordlist]
+    #padding to a max length of 10
+    padded_words = pad_sequences(encoded_words, maxlen=max_length, padding=&#39;post&#39;)
+    return padded_words
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Processing the training and testing data with the above pipeline&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#training data
+wordvec, labelvec = datalabel(TrainingVal_data)
+print(wordvec[:3])
+print(labelvec[:3])
+padded_docs = IntEncodeWords(wordvec)
+
+#testing data
+wordvec_test, labelvec_test = datalabel(Testing_data)
+padded_docs_test = IntEncodeWords(wordvec_test)
+print(wordvec_test[:5])
+print(encoded_docs_test[:5])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[&#39;nal&#39;, &#39;mi chyeo ga na b wa&#39;, &#39;ai&#39;]
+[[0 1]
+ [0 1]
+ [0 1]]
+[&#39;jeil&#39;, &#39;sa ran ghaeoh&#39;, &#39;sa ran ghae&#39;, &#39;aka sh&#39;, &#39;dal la jyeos seo&#39;]
+[[55208], [67026, 161580, 152147], [67026, 161580, 25207], [48363, 63007], [9265, 18646, 109198, 141814]]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I train an LSTM to classify Korean and Bangla words, defined below:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;lstm_out = 5
+# define the model
+model = Sequential()
+model.add(Embedding(vocab_size, 8, input_length=max_length))
+model.add(LSTM(lstm_out, recurrent_initializer=&amp;quot;random_uniform&amp;quot;, bias_initializer=&amp;quot;zeros&amp;quot;, dropout=0.2, recurrent_dropout=0.2, kernel_regularizer=l2(0.01), recurrent_regularizer=l2(0.01), bias_regularizer=l2(0.01)))
+model.add(Dense(2, activation=&#39;softmax&#39;))
+
+# compile the model
+model.compile(optimizer=&#39;adam&#39;, loss=&#39;categorical_crossentropy&#39;, metrics=[&#39;accuracy&#39;])
+# summarize the model
+print(model.summary())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Model: &amp;quot;sequential_5&amp;quot;
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_5 (Embedding)      (None, 10, 8)             1600000   
+_________________________________________________________________
+lstm_5 (LSTM)                (None, 5)                 280       
+_________________________________________________________________
+dense_5 (Dense)              (None, 2)                 12        
+=================================================================
+Total params: 1,600,292
+Trainable params: 1,600,292
+Non-trainable params: 0
+_________________________________________________________________
+None
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Early stopping the training if validation loss starts to converge (wait for 50 epochs to make sure validation loss is indeed converging).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from keras.callbacks import EarlyStopping
+class ThresholdEarlyStopping(EarlyStopping):
+    def __init__(self, monitor=&#39;val_loss&#39;, min_epochs=10,
+                 threshold=0.995, increase=1.75, verbose=0, mode=&#39;auto&#39;):
+
+        super(ThresholdEarlyStopping, self).__init__(
+            monitor=monitor,
+            patience=min_epochs,
+            verbose=verbose,
+            mode=mode
+        )
+
+        self.threshold = threshold
+        self.increase = increase
+
+    def on_epoch_end(self, epoch, logs={}):
+        if epoch &amp;lt; self.patience:
+            current = logs.get(self.monitor)
+            if current is None:
+                warnings.warn(&#39;Early stopping requires %s to be available!&#39;
+                              % (self.monitor), RuntimeWarning)
+
+            if self.monitor_op(current, self.best):
+                # if current val_loss within 0.5% margin of the best(min) val_loss, 
+                # add some grace to the patience to monitor if val_loss is indeed converging 
+                if self.monitor_op(current, self.threshold*self.best):
+                    self.patience = max(self.patience, epoch*self.increase)
+                self.best = current
+
+        else:
+            if self.verbose &amp;gt; 0:
+                print(&#39;Epoch %05d: early stopping&#39; % (epoch))
+
+            self.model.stop_training = True
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# fit the model
+print(labelvec[:5])
+history = model.fit(padded_docs, labelvec, batch_size=2000, validation_split=0.1, epochs=500, verbose=1, callbacks=[ThresholdEarlyStopping(verbose=1, min_epochs=50)])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;[[0 1]
+ [0 1]
+ [0 1]
+ [1 0]
+ [0 1]]
+Train on 90000 samples, validate on 10000 samples
+Epoch 1/500
+90000/90000 [==============================] - 3s 36us/step - loss: 0.8363 - acc: 0.5272 - val_loss: 0.8187 - val_acc: 0.5392
+Epoch 2/500
+90000/90000 [==============================] - 2s 20us/step - loss: 0.8040 - acc: 0.6119 - val_loss: 0.7891 - val_acc: 0.8677
+Epoch 3/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.7690 - acc: 0.7265 - val_loss: 0.7366 - val_acc: 0.7410
+Epoch 4/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.6231 - acc: 0.8391 - val_loss: 0.4600 - val_acc: 0.9033
+Epoch 5/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.4186 - acc: 0.9046 - val_loss: 0.3429 - val_acc: 0.9264
+Epoch 6/500
+90000/90000 [==============================] - 3s 30us/step - loss: 0.3586 - acc: 0.9267 - val_loss: 0.3144 - val_acc: 0.9287
+Epoch 7/500
+90000/90000 [==============================] - 2s 26us/step - loss: 0.3318 - acc: 0.9333 - val_loss: 0.2973 - val_acc: 0.9321
+Epoch 8/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.3141 - acc: 0.9364 - val_loss: 0.2852 - val_acc: 0.9333
+Epoch 9/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.3016 - acc: 0.9381 - val_loss: 0.2767 - val_acc: 0.9336
+Epoch 10/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2936 - acc: 0.9392 - val_loss: 0.2698 - val_acc: 0.9354
+Epoch 11/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2847 - acc: 0.9410 - val_loss: 0.2642 - val_acc: 0.9349
+Epoch 12/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2782 - acc: 0.9411 - val_loss: 0.2615 - val_acc: 0.9343
+Epoch 13/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2735 - acc: 0.9414 - val_loss: 0.2561 - val_acc: 0.9346
+Epoch 14/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2698 - acc: 0.9422 - val_loss: 0.2525 - val_acc: 0.9332
+Epoch 15/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2660 - acc: 0.9426 - val_loss: 0.2496 - val_acc: 0.9342
+Epoch 16/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2626 - acc: 0.9429 - val_loss: 0.2473 - val_acc: 0.9353
+Epoch 17/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2595 - acc: 0.9429 - val_loss: 0.2447 - val_acc: 0.9358
+Epoch 18/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2582 - acc: 0.9428 - val_loss: 0.2424 - val_acc: 0.9346
+Epoch 19/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2557 - acc: 0.9430 - val_loss: 0.2407 - val_acc: 0.9351
+Epoch 20/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2530 - acc: 0.9425 - val_loss: 0.2394 - val_acc: 0.9334
+Epoch 21/500
+90000/90000 [==============================] - 3s 28us/step - loss: 0.2517 - acc: 0.9434 - val_loss: 0.2382 - val_acc: 0.9358
+Epoch 22/500
+90000/90000 [==============================] - 3s 28us/step - loss: 0.2502 - acc: 0.9431 - val_loss: 0.2367 - val_acc: 0.9351
+Epoch 23/500
+90000/90000 [==============================] - 2s 26us/step - loss: 0.2499 - acc: 0.9436 - val_loss: 0.2349 - val_acc: 0.9355
+Epoch 24/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2478 - acc: 0.9431 - val_loss: 0.2341 - val_acc: 0.9385
+Epoch 25/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2460 - acc: 0.9430 - val_loss: 0.2333 - val_acc: 0.9337
+Epoch 26/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2449 - acc: 0.9435 - val_loss: 0.2325 - val_acc: 0.9352
+Epoch 27/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2443 - acc: 0.9425 - val_loss: 0.2313 - val_acc: 0.9344
+Epoch 28/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2436 - acc: 0.9431 - val_loss: 0.2309 - val_acc: 0.9348
+Epoch 29/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2417 - acc: 0.9433 - val_loss: 0.2297 - val_acc: 0.9352
+Epoch 30/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2424 - acc: 0.9431 - val_loss: 0.2292 - val_acc: 0.9344
+Epoch 31/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2394 - acc: 0.9435 - val_loss: 0.2287 - val_acc: 0.9346
+Epoch 32/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2396 - acc: 0.9434 - val_loss: 0.2281 - val_acc: 0.9329
+Epoch 33/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2399 - acc: 0.9428 - val_loss: 0.2281 - val_acc: 0.9358
+Epoch 34/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2386 - acc: 0.9431 - val_loss: 0.2272 - val_acc: 0.9334
+Epoch 35/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2372 - acc: 0.9433 - val_loss: 0.2266 - val_acc: 0.9349
+Epoch 36/500
+90000/90000 [==============================] - 3s 29us/step - loss: 0.2360 - acc: 0.9433 - val_loss: 0.2264 - val_acc: 0.9333
+Epoch 37/500
+90000/90000 [==============================] - 2s 25us/step - loss: 0.2360 - acc: 0.9437 - val_loss: 0.2255 - val_acc: 0.9351
+Epoch 38/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2367 - acc: 0.9433 - val_loss: 0.2251 - val_acc: 0.9325
+Epoch 39/500
+90000/90000 [==============================] - 2s 25us/step - loss: 0.2343 - acc: 0.9430 - val_loss: 0.2243 - val_acc: 0.9336
+Epoch 40/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2336 - acc: 0.9432 - val_loss: 0.2241 - val_acc: 0.9340
+Epoch 41/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2333 - acc: 0.9434 - val_loss: 0.2234 - val_acc: 0.9332
+Epoch 42/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2328 - acc: 0.9433 - val_loss: 0.2234 - val_acc: 0.9344
+Epoch 43/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2331 - acc: 0.9435 - val_loss: 0.2225 - val_acc: 0.9347
+Epoch 44/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2324 - acc: 0.9434 - val_loss: 0.2221 - val_acc: 0.9338
+Epoch 45/500
+90000/90000 [==============================] - 2s 27us/step - loss: 0.2316 - acc: 0.9430 - val_loss: 0.2216 - val_acc: 0.9331
+Epoch 46/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2302 - acc: 0.9427 - val_loss: 0.2211 - val_acc: 0.9341
+Epoch 47/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2310 - acc: 0.9423 - val_loss: 0.2208 - val_acc: 0.9339
+Epoch 48/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2290 - acc: 0.9427 - val_loss: 0.2205 - val_acc: 0.9341
+Epoch 49/500
+90000/90000 [==============================] - 2s 25us/step - loss: 0.2302 - acc: 0.9424 - val_loss: 0.2200 - val_acc: 0.9337
+Epoch 50/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2288 - acc: 0.9424 - val_loss: 0.2197 - val_acc: 0.9337
+Epoch 51/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2282 - acc: 0.9430 - val_loss: 0.2195 - val_acc: 0.9349
+Epoch 00050: early stopping
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;check for overfitting by comparing the validation loss with training loss:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.plot(history.history[&#39;loss&#39;])
+plt.plot(history.history[&#39;val_loss&#39;])
+plt.ylabel(&#39;loss&#39;)
+plt.xlabel(&#39;epoch&#39;)
+plt.legend([&#39;training loss&#39;, &#39;validation loss&#39;], loc=&#39;best&#39;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;transliterateLangDetect_56_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The model is trained.&lt;/p&gt;
+
+&lt;p&gt;evaluating the LSTM language classifier with testing data (with default decision boundary = 0.5):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# evaluate the model
+loss, accuracy = model.evaluate(padded_docs_test, labelvec_test, verbose=0)
+print(&#39;Accuracy: %.2f %%&#39; % (accuracy*100))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Accuracy: 93.36 %
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Optimizing the decision boundary of the LSTM classifier for best accuracy using ROC curve:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from sklearn.metrics import roc_curve, auc
+labelvec_pred = model.predict(padded_docs_test)
+fpr, tpr, cut = roc_curve(labelvec_test.ravel(), labelvec_pred.ravel())
+AUC = auc(fpr, tpr)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;labelvec_pred[:5], labelvec_test[:5, 0]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(array([[0.00991759, 0.99008244],
+        [0.1209347 , 0.8790653 ],
+        [0.00542074, 0.9945793 ],
+        [0.995492  , 0.00450803],
+        [0.00368168, 0.99631834]], dtype=float32), array([0, 0, 0, 1, 0]))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.figure(1)
+plt.plot([0, 1], [0, 1], &#39;k--&#39;)
+plt.plot(fpr, tpr, label=&#39;(AUC = {:.3f})&#39;.format(AUC))
+plt.xlabel(&#39;False positive rate&#39;)
+plt.ylabel(&#39;True positive rate&#39;)
+plt.title(&#39;ROC curve&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;transliterateLangDetect_63_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Closest point to (0,1) on the ROC above will have the optimal threshold (which reduces error conributed from both type I and II errors):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;tprDist = np.square(tpr-1)
+fprDist = np.square(fpr)
+DistFromPerfectEff = tprDist + fprDist
+
+Optimum_cut = cut[DistFromPerfectEff.argmin()]
+Optimum_cut
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;0.4986838
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Optimal threshold at 0.5 (default cut for accuracy).&lt;/p&gt;
+
+&lt;h2 id=&#34;storing-the-model&#34;&gt;Storing the model&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from keras.models import model_from_json
+
+#model to json
+model_json = model.to_json()
+json_file = open(&amp;quot;translit.json&amp;quot;, &amp;quot;w&amp;quot;)
+json_file.write(model_json)
+#weights to h5
+model.save_weights(&amp;quot;translit.h5&amp;quot;)
+print(&amp;quot;model saved to disk&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;model saved to disk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;loading-the-model&#34;&gt;Loading the model&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# load model
+jfile = open(&#39;translit.json&#39;, &#39;r&#39;)
+loaded_model_json = jfile.read()
+jfile.close()
+loaded_model = model_from_json(loaded_model_json)
+# load weights
+loaded_model.load_weights(&amp;quot;translit.h5&amp;quot;)
+print(&amp;quot;Loaded model from disk&amp;quot;)
+# compile the loaded model
+loaded_model.compile(optimizer=&#39;adam&#39;, loss=&#39;categorical_crossentropy&#39;, metrics=[&#39;accuracy&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Loaded model from disk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The loaded model reproduces the accuracy for transliterated words:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# evaluate the loaded model
+loaded_loss, loaded_accuracy = loaded_model.evaluate(padded_docs_test, labelvec_test, verbose=0)
+print(&#39;Accuracy: %.2f %%&#39; % (loaded_accuracy*100))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Accuracy: 93.36 %
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Using Maximum Likelihood Estimator to predict the language of an entire transliterated sentence, from the individual scores of the words in that sentence:&lt;/p&gt;
+
+&lt;p&gt;$$Prediced\ Language = \underset{l}{\operatorname{argmax}} \sum&lt;em&gt;{i=1}^{all\ words\ in\ sentence} log(P(word&lt;/em&gt;{i}|l))$$&lt;/p&gt;
+
+&lt;p&gt;where $l \in { Korean, Bengali } $&lt;/p&gt;
+
+&lt;p&gt;and $P(word|l)$ is output score of the word from the LSTM classifier for language $l$&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import string
+
+def TextToInput(text):
+    text = text.translate(str.maketrans(&#39;&#39;, &#39;&#39;, string.punctuation)).split()
+    text = [PhoneticWordSplit(w) for w in text]
+    return IntEncodeWords(text)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def PredictLanguage(text):
+    lstminput = TextToInput(text)
+    p = model.predict(lstminput)
+    langdict = {0:&amp;quot;Bengali&amp;quot;, 1:&amp;quot;Korean&amp;quot;}
+    mle = np.log(p)
+    mle = np.sum(mle, axis=0)
+    return langdict[np.argmax(mle)]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;inputtext = &amp;quot;cheoeumbuteo geudaeyeossjyo \
+naege dagaol han saram \
+dan han beonui seuchimedo \
+nae nunbicci mareul hajyo&amp;quot;
+
+#&amp;quot;Amake naam~ #ki?!@&amp;quot;
+PredictLanguage(inputtext)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;&#39;Korean&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;results&#34;&gt;Results&lt;/h2&gt;
+
+&lt;p&gt;The LSTM classifier using phonetic syllables as input features is able to give an optimum accuracy of ~93 % with AUC = 0.985.&lt;/p&gt;
+
+&lt;h3 id=&#34;next-steps&#34;&gt;Next steps:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Create a web-app to run the NLP model and host on google cloud.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Perform k-fold cross-validation to better estimate classifier&amp;rsquo;s performance&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Should test vanilla RNN too since the input string of phonetic syllables are not too long&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Improve cleaning to get rid of non-lexical vocables in the corpus to train a better discriminator&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Try to find other sources (than song lyrics) for Korean and Bangla transliterated texts&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Think of a better way to reduce even further English words that are contaminating the corpuses&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;h2 id=&#34;add-other-non-roman-langauges&#34;&gt;Add other non-roman langauges&lt;/h2&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>Studies of granularity of a hadronic calorimeter for tens-of-TeV jets at a 100 TeV pp collider</title>

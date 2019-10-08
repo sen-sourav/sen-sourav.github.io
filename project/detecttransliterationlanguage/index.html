@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.5.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Sourav Sen">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="The problem Below is a text transliterated in English:
+   &ldquo;aaj ka mausam achchha hai&rdquo; &ldquo;The weather is good today&rdquo;     (transliterated text) (translated text)    One might be curious about what language is this transliterated text actually in (unless one knows that language already). Happens to me quite often, when I&rsquo;m reading Youtube or Facebook or other social media threads.
+Well, the above text is in Hindi:">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://sen-sourav.github.io/project/detecttransliterationlanguage/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="#2962ff">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.min.a3cda781a9b24f26fefd34a53547835b.css">
+
+  
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon-32.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="https://sen-sourav.github.io/project/detecttransliterationlanguage/">
+
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Sourav&#39;s">
+  <meta property="og:url" content="https://sen-sourav.github.io/project/detecttransliterationlanguage/">
+  <meta property="og:title" content="Detect Language of Transliterated Texts | Sourav&#39;s">
+  <meta property="og:description" content="The problem Below is a text transliterated in English:
+   &ldquo;aaj ka mausam achchha hai&rdquo; &ldquo;The weather is good today&rdquo;     (transliterated text) (translated text)    One might be curious about what language is this transliterated text actually in (unless one knows that language already). Happens to me quite often, when I&rsquo;m reading Youtube or Facebook or other social media threads.
+Well, the above text is in Hindi:"><meta property="og:image" content="https://sen-sourav.github.io/img/icon-192.png">
+  <meta property="twitter:image" content="https://sen-sourav.github.io/img/icon-192.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2019-10-08T01:22:11-04:00">
+    
+    <meta property="article:modified_time" content="2019-10-08T01:22:11-04:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sen-sourav.github.io/project/detecttransliterationlanguage/"
+  },
+  "headline": "Detect Language of Transliterated Texts",
+  
+  "datePublished": "2019-10-08T01:22:11-04:00",
+  "dateModified": "2019-10-08T01:22:11-04:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Sourav Sen"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sourav's",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sen-sourav.github.io/img/icon-512.png"
+    }
+  },
+  "description": "The problem Below is a text transliterated in English:\n   \u0026ldquo;aaj ka mausam achchha hai\u0026rdquo; \u0026ldquo;The weather is good today\u0026rdquo;     (transliterated text) (translated text)    One might be curious about what language is this transliterated text actually in (unless one knows that language already). Happens to me quite often, when I\u0026rsquo;m reading Youtube or Facebook or other social media threads.\nWell, the above text is in Hindi:"
+}
+</script>
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Detect Language of Transliterated Texts | Sourav&#39;s</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0 compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">Sourav&#39;s</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav ml-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#talks"><span>Talks</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+
+        
+
+        
+
+        
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+  <article class="article article-project">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Detect Language of Transliterated Texts</h1>
+
+  
+
+  
+    
+
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Oct 8, 2019
+  </span>
+  
+
+  
+
+  
+
+  
+  
+  
+
+  
+  
+
+  
+    
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://sen-sourav.github.io/project/detecttransliterationlanguage/&amp;text=Detect%20Language%20of%20Transliterated%20Texts" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://sen-sourav.github.io/project/detecttransliterationlanguage/&amp;t=Detect%20Language%20of%20Transliterated%20Texts" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Detect%20Language%20of%20Transliterated%20Texts&amp;body=https://sen-sourav.github.io/project/detecttransliterationlanguage/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://sen-sourav.github.io/project/detecttransliterationlanguage/&amp;title=Detect%20Language%20of%20Transliterated%20Texts" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=Detect%20Language%20of%20Transliterated%20Texts%20https://sen-sourav.github.io/project/detecttransliterationlanguage/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://sen-sourav.github.io/project/detecttransliterationlanguage/&amp;title=Detect%20Language%20of%20Transliterated%20Texts" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<hr />
+
+<h3 id="the-problem">The problem</h3>
+
+<p>Below is a text transliterated in English:</p>
+
+<table>
+<thead>
+<tr>
+<th>&ldquo;aaj ka mausam achchha hai&rdquo;</th>
+<th>&ldquo;The weather is good today&rdquo;</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>(transliterated text)</td>
+<td>(translated text)</td>
+</tr>
+</tbody>
+</table>
+
+<p>One might be curious about what language is this transliterated text actually in (unless one knows that language already). Happens to me quite often, when I&rsquo;m reading Youtube or Facebook or other social media threads.</p>
+
+<p>Well, the above text is in Hindi:</p>
+
+<table>
+<thead>
+<tr>
+<th>&ldquo;aaj ka mausam achchha hai&rdquo;</th>
+<th>&ldquo;आज का मौसम अच्छा है&rdquo;</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>(transliterated text)</td>
+<td>(original script)</td>
+</tr>
+</tbody>
+</table>
+
+<p>Since computer and phone keyboards are generally in English, it is often convenient for non-roman language speakers to transliterate their texts to English while typing than to use the original script (writing system) of their language. Since the transliterated text does not have the information about its original language, it becomes hard for others (who do not speak that language) to even decipher the language and further understand the meaning of the text.</p>
+
+<p>It would be convenient if machines could fill this gap by telling us the language of those transliterated texts, which we very often encounter in social media threads etc., so that we don&rsquo;t have to ask other people if they can identify the language of a transliterated text.</p>
+
+<h3 id="scope-of-the-project">Scope of the project</h3>
+
+<p>In this project, I therefore attempt to address this problem by designing an NLP model which can detect the language of a transliterated text. Due to lack of time at the moment, I confine the scope of this project to just classify texts transliterated from Korean and Bangla (Bengali) languages.</p>
+
+<p>Although not important, but the reason for choosing these two non-roman languages in particular for the project is because:<br />
+* Bangla is my mother tongue so it would be fun to teach the machine my language. Bangla (or Bengali) is spoken mostly in the state of West Bengal in India and in Bangladesh.
+* Korean pop songs are popular lately, so considering their international reach, I thought, Korean transliteration might be relevant to people.
+* I shall be including other non-roman languages in the future.</p>
+
+<h3 id="solution-approach">Solution approach</h3>
+
+<p>We can often identify a language being spoken, if we have prior experience of hearing that language, even if we may not understand the language at all. Every language has some characteristic sounds patterns. These patterns can be used to identify a language even without understanding them. So, like speech, if we know the correct pronounciation of transliterated texts (ie pronounciation in their original langauge), we might be able to identify the language, given we have some prior familiarity with how the language generally sounds.</p>
+
+<p>Automatic Speech Recognition (ASR) systems are pretty decent in identifying language from speech audio inputs. ASRs use spectrograms (shown below) to learn features of a speech input such as its language.</p>
+
+<p><img src="https://www.researchgate.net/profile/Phillip_Lobel/publication/267827408/figure/fig2/AS:295457826852866@1447454043380/Spectrograms-and-Oscillograms-This-is-an-oscillogram-and-spectrogram-of-the-boatwhistle.png"  width="400"></p>
+
+<p>[Image source: Kovitvongsa, Kathryn &amp; Lobel, Phillip. (2019). Convenient Fish Acoustic Data Collection in the Digital Age.]</p>
+
+<p>In spectrograms, audio files are chopped into thin time slices (in the abscissa), and for each time slice, all the frequencies present in it are plotted (in the ordinate) with their corresponding intensities are represented in the heat map, obtained using Fourier transform. The frequencies tell us about the nature of the source that produced that sound, e.g., you can identify musical instruments by the pattern of their overtones (multiples of fundamental frequency).</p>
+
+<p>So, in spectrograms of human speech audio files, the frequencies in a particular time slice should indicate the part of buccal cavity that produced it. It would be ideal if one knew the time span of each characteristic sound that create the words in a language. However, since that is not known, in spectrograms, the time is sliced into very small intervals, so that the NLP model can join a few of those small time slices and learn the actual length of a particular characteristic sound.</p>
+
+<p>If we could split our transliterated words into fragments which represent the characteristic sounds, a string of those word fragments would be analogous to spectrograms for audio speech. We can then use those word fragment strings as inputs to an NLP model to identify the language of the transliterated text.</p>
+
+<p>Fortunately, when a text is transliterated from one langauge to other, it is generally spelled out phonetically (even if the original language is not strictly phonetic). So, if we were to phonetically pronounce the transliterated words, we might be quite closer to its actual pronounciation.</p>
+
+<p>To get the phonetic pronounciation, we assumed that the texts were transliterated from some unknown language to Italian, a strictly phonetic language which also uses the Latin script as English. We then divide the transliterated words into syllables according to the  Italian language, ie phonetically. We used those (phonetic) syllables as inputs to our NLP model.</p>
+
+<h1 id="data-scraping">Data scraping</h1>
+
+<p>Song lyrics website often transliterate songs in English (perhaps for international audiences). So, for Korean and Bangla (Bengali) sentences transliterated in English, the song lyrics on the following lyrics websites were scraped:
+ - bangla lyrics: <a href="http://www.lyricsbangla.com/" target="_blank">http://www.lyricsbangla.com/</a>
+ - korean lyrics: <a href="https://romanization.wordpress.com/" target="_blank">https://romanization.wordpress.com/</a></p>
+
+<pre><code class="language-python">from urllib.request import urlopen
+from bs4 import BeautifulSoup
+import re
+</code></pre>
+
+<p>Since the objects in Bengali (referred as Bangla henceforth) and Korean texts might be different created two separate functions to fetch respective text. The different functions are just for cleanliness purpose.</p>
+
+<h3 id="functions-for-scraping-korean-transliterated-texts">Functions for scraping Korean transliterated texts</h3>
+
+<pre><code class="language-python">def fetch_korean(fname):
+    #some browsing revealed there are 1087 pages (@29th July, 2019) indexed 0 through 1086 with links to lyrics
+    #extracting the song links from each of these pages
+    npages = 1087
+    lyricsbag = open(fname, 'w')
+    count = 0
+    for pg in range(npages):
+        soup = BeautifulSoup(urlopen(&quot;https://romanization.wordpress.com/page/%i&quot;%pg), 'html.parser')
+        links = soup.find_all('a')
+        pageurls = [_.get('href') for _ in links if (_.text == 'Continue reading →')]
+        for url in pageurls:
+            b = koreanLyrics(url)
+            [lyricsbag.write(_+&quot;\n&quot;) for _ in b]
+            count += 1
+            print(count)
+    
+    return
+
+</code></pre>
+
+<pre><code class="language-python">def koreanLyrics(url):
+    s = BeautifulSoup(urlopen(url), 'html.parser')
+    lblob = [_.text for _ in s.find_all('p')]
+    lyrics = []
+    pendown = False
+    for _ in lblob:
+        if pendown:
+            if (_ == &quot;//&quot;):
+                pendown = False
+                break
+            else:
+                lyrics += _.split(&quot;\n&quot;)
+        else:
+            if &quot;to see the lyrics&quot; in _:
+                pendown = True
+    return lyrics
+</code></pre>
+
+<h3 id="functions-for-scraping-bangla-transliterated-texts">Functions for scraping Bangla transliterated texts</h3>
+
+<pre><code class="language-python">def fetch_bangla(fname):
+    #url = &quot;http://www.lyricsbangla.com/?sec=listing&amp;lyricid=4140&quot;
+    url = &quot;file:///home/sourav/MLProjects/transliterate/Lyrics%20Search%20»%20LyricsBangla.com.html&quot; 
+    #TODO replace the static page with dynamic link smh
+    #&quot;http://www.lyricsbangla.com/index.php?sec=search&quot;
+    html = urlopen(url)
+
+    soup = BeautifulSoup(html, 'html.parser')
+    b = soup.find('table')
+    urltable = b.find_all('td')
+    
+    #extracting songs from links in www.lyricsbangla.com index page
+    lyricsurllist = []
+    lyricsbag = open(fname, 'w')
+    count = 0
+    for u in urltable:
+        if (u.find('a') != None):
+            songlink = u.a.get('href')
+            if (&quot;artist&quot; not in songlink):
+                b = banglaLyrics(songlink)
+                [lyricsbag.write(_+&quot;\n&quot;) for _ in b]
+                count += 1
+                print(count)
+        
+    return
+    
+</code></pre>
+
+<p>Bangla lyrics often have chords, so here is a list of chords to clean the text scraped from: <a href="https://www.pianochord.org/" target="_blank">https://www.pianochord.org/</a> and saved in &ldquo;chords.txt&rdquo;</p>
+
+<pre><code class="language-python">##(source: https://www.pianochord.org/)
+def get_musicalchords():
+    chords_ = []
+    f = open(&quot;chords.txt&quot;, 'r')
+    lines = f.readlines()
+    for l in lines:
+        chords_ += l.strip().split()
+
+    return chords_
+</code></pre>
+
+<pre><code class="language-python">def banglaLyrics(url):
+    spchar = re.compile('[@_!#$%^&amp;*()&lt;&gt;?/\|}{~:]')
+
+
+    s = BeautifulSoup(urlopen(url), 'html.parser')
+    lblob = s.find('p', id='tabs-1')
+    lyrics = []
+    chord_ = get_musicalchords()
+    for line in lblob:
+        if (line.string != None):
+            l = str(line)
+            if any(chord in l for chord in chords_):
+                continue
+            elif (spchar.search(l)!=None):
+                continue
+            else:
+                l = l.strip()
+                if (l): lyrics.append(l)
+    return lyrics
+</code></pre>
+
+<p>The following cell scrapes Bangla and Korean lyrics respectively using the functions defined above.</p>
+
+<pre><code class="language-python">banglacorpus = &quot;banglacorpus.txt&quot;
+fetch_bangla(banglacorpus)
+
+
+koreancorpus = &quot;koreancorpus.txt&quot;
+fetch_korean(koreancorpus)
+
+</code></pre>
+
+<h1 id="data-cleaning">Data Cleaning</h1>
+
+<p>&ldquo;cleanedkoreancorpus.txt&rdquo; and &ldquo;cleanedbanglacorpus.txt&rdquo; are the cleaned corpuses for Korean and Bangla transliterated text used for the analysis</p>
+
+<div style="text-align: right"> "Cleaning is messy!!" ~Anonymous </div>
+
+<h1 id="data-visualization-for-encoding">Data Visualization for encoding</h1>
+
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+import random
+import pyphen
+</code></pre>
+
+<p>While transliteration, words are spelled phonetically. So, if one spells the transliterated word phonetically, one might actually get quite close to the actual pronounciation in its native language.
+If the transliterated words are, therefore, split into phonetic syllables, a list of those phonetic syllables could represent the pronounciation of that word and thus information about its native language. These phonetic syllables are quite analogous to phoneme sequences used in ASR (Automatic Speech Recognition).</p>
+
+<p>Since English is not a phonetic language, its syllables are not phonetic. However, with we try to split the word using a phonetic language, like Italian, then the syllables would indeed be phonetic.</p>
+
+<p>I use a python package - &lsquo;pyphen&rsquo; (<a href="https://pyphen.org" target="_blank">https://pyphen.org</a>) for such syllable splitting. This package provides an option to choose the language in which the user wants to split the word. As discussed above, I used Italian, a phonetic language, to split the word into syllables, so that I get phonetic syllables.</p>
+
+<p>The function below splits the words phonetically (as in italian) into list of syllables using Pyphen:</p>
+
+<pre><code class="language-python">def PhoneticWordSplit(word):
+    dic = pyphen.Pyphen(lang='it_IT')
+    splitword = dic.inserted(word)
+    splitword = splitword.replace(&quot;-&quot;, &quot; &quot;)
+    return splitword
+</code></pre>
+
+<p>The words split into phonetic syllables are stored in koreanwordbag.txt and banglawordbag.txt for Korean and Bangla resp. and used to train and test the langauge detection model.</p>
+
+<pre><code class="language-python">def WordBagMaker(corpusfilename, label):
+    f = open(corpusfilename, 'r')
+    lines = f.readlines()
+
+    import random
+    worddict = []
+    for l in lines:
+        words = l.split()
+        #only words present in sentences used, not single word sentences
+        if (len(words) &lt; 2): continue 
+        for w in words:
+            #words with digits not used and single letter words not used
+            if (len(w) &gt; 1) and w.isalpha(): 
+                worddict.append(PhoneticWordSplit(w) + &quot; : &quot; + label)
+    #shuffle the list
+    random.shuffle(worddict)   
+    return worddict
+
+for lang in ['korean', 'bangla']:
+    fl = open(&quot;%swordbag.txt&quot;%lang, 'w')
+    [fl.write(_+&quot;\n&quot;) for _ in WordBagMaker(&quot;cleaned%scorpus.txt&quot;%lang, &quot;K&quot; if lang=='korean' else &quot;B&quot; )]
+    fl.close()
+</code></pre>
+
+<pre><code class="language-python">datakor = open(&quot;koreanwordbag.txt&quot;, 'r').readlines()
+databan = open(&quot;banglawordbag.txt&quot;, 'r').readlines()
+</code></pre>
+
+<p>A quick feature visualization to see if simple features, like syllable count per word,have any discriminating power.</p>
+
+<pre><code class="language-python">def getfeatures(langcorpus):
+    syllables_per_word = []
+    letters_per_syllable = []
+    for d in langcorpus:
+        splitword = d.split(&quot; : &quot;)[0].split(&quot; &quot;)
+        syllables_per_word.append(len(splitword))
+        [letters_per_syllable.append(len(_)) for _ in splitword]
+    return syllables_per_word, letters_per_syllable
+
+syllables_per_wordKOR, letters_per_syllableKOR = getfeatures(datakor)
+
+syllables_per_wordBAN, letters_per_syllableBAN = getfeatures(databan)
+
+syllables_per_word = np.concatenate((syllables_per_wordKOR,syllables_per_wordBAN), axis=0)
+letters_per_syllable = np.concatenate((letters_per_syllableKOR, letters_per_syllableBAN), axis=0)
+</code></pre>
+
+<pre><code class="language-python">binsSPW = [_ - 0.5 for _ in range(1,11)]
+plt.xticks(range(1,11))
+plt.hist(syllables_per_word, binsSPW, alpha=0.3, label='both languages')
+plt.hist(syllables_per_wordKOR, binsSPW, alpha=0.3, label='Korean') 
+plt.hist(syllables_per_wordBAN, binsSPW, alpha=0.3, label='Bangla')
+
+plt.xlabel('#syllables/word')
+plt.ylabel('frequency')
+plt.legend(loc='best')
+plt.show()
+</code></pre>
+
+<p><img src="transliterateLangDetect_34_0.png" alt="png" /></p>
+
+<p>Bangla words mostly have 2 syllables, Korean words can have upto 5 syllables in a word. A 10 syllable vector should be enough to encode a word from either language.</p>
+
+<pre><code class="language-python">binsLPS = [_ - 0.5 for _ in range(1,11)]
+plt.xticks(range(1,11))
+plt.hist(letters_per_syllable, binsLPS, alpha=0.3, label='both languages')
+plt.hist(letters_per_syllableKOR, binsLPS, alpha=0.3, label='Korean') 
+plt.hist(letters_per_syllableBAN, binsLPS, alpha=0.3, label='Bangla')
+
+plt.xlabel('#letters/syllables')
+plt.ylabel('frequency')
+plt.legend(loc='best')
+plt.show()
+</code></pre>
+
+<p><img src="transliterateLangDetect_36_0.png" alt="png" /></p>
+
+<p>Most phonetic syllables have around 2 letters. Not a significant disciminator. Would therefore be fair to disregard the syllable length and just integer encode the syllables in both the corpuses.</p>
+
+<h1 id="training-data">Training data</h1>
+
+<p>Using 50,000 (10,000) Bangla and Korean words each randomly from the corpuses for training (testing).</p>
+
+<pre><code class="language-python">Ntrain = 50000
+Ntest  = 10000
+random.shuffle(datakor) #korean
+random.shuffle(databan) #bangla
+TrainingVal_data = datakor[:Ntrain] + databan[:Ntrain] 
+Testing_data = datakor[Ntrain:Ntrain+Ntest] + databan[Ntrain:Ntrain+Ntest]
+random.shuffle(TrainingVal_data)
+random.shuffle(Testing_data)
+</code></pre>
+
+<h1 id="word-and-label-encoding">Word and label encoding</h1>
+
+<pre><code class="language-python">from keras.preprocessing.text import hashing_trick
+from keras.preprocessing.sequence import pad_sequences
+</code></pre>
+
+<pre><code class="language-python">vocab_size = 30
+v = ['in in in', 'kab bo', 'so kal']
+encoded_docs = [hashing_trick(d, vocab_size, hash_function='md5') for d in v]
+encoded_docs
+v1 = ['in in bo']
+encoded_docs1 = [hashing_trick(d, vocab_size, hash_function='md5') for d in v1]
+print(encoded_docs1)
+print(encoded_docs)
+</code></pre>
+
+<pre><code>[[26, 26, 3]]
+[[26, 26, 26], [15, 3], [26, 15]]
+</code></pre>
+
+<pre><code class="language-python">from keras.models import Sequential
+from keras.layers import Dense, Embedding, LSTM
+from keras.regularizers import l2
+</code></pre>
+
+<pre><code class="language-python">def datalabel(dataset):
+    '''function to label words 'K' or 'B' for Korean and Bangla resp. '''
+    wvec = []
+    lvec = [] 
+    for td in dataset:
+        tw, tl = td.split(&quot; : &quot;)
+        #One hot encoding: [1,0] : Bangla, [0,1] : Korean
+        l = [1, 0] if tl.strip() == &quot;B&quot; else [0,1] 
+        wvec.append(tw)
+        lvec.append(l)
+    return wvec, np.array(lvec)
+</code></pre>
+
+<p>Pipeline to integer encode phonetic syllables and pad words to a max of 10 syllables:</p>
+
+<pre><code class="language-python">def IntEncodeWords(wordlist):
+    vocab_size = 200000
+    max_length = 10
+    #integer encoding the syllables
+    encoded_words = [hashing_trick(d, vocab_size, hash_function='md5') for d in wordlist]
+    #padding to a max length of 10
+    padded_words = pad_sequences(encoded_words, maxlen=max_length, padding='post')
+    return padded_words
+</code></pre>
+
+<p>Processing the training and testing data with the above pipeline</p>
+
+<pre><code class="language-python">#training data
+wordvec, labelvec = datalabel(TrainingVal_data)
+print(wordvec[:3])
+print(labelvec[:3])
+padded_docs = IntEncodeWords(wordvec)
+
+#testing data
+wordvec_test, labelvec_test = datalabel(Testing_data)
+padded_docs_test = IntEncodeWords(wordvec_test)
+print(wordvec_test[:5])
+print(encoded_docs_test[:5])
+</code></pre>
+
+<pre><code>['nal', 'mi chyeo ga na b wa', 'ai']
+[[0 1]
+ [0 1]
+ [0 1]]
+['jeil', 'sa ran ghaeoh', 'sa ran ghae', 'aka sh', 'dal la jyeos seo']
+[[55208], [67026, 161580, 152147], [67026, 161580, 25207], [48363, 63007], [9265, 18646, 109198, 141814]]
+</code></pre>
+
+<p>I train an LSTM to classify Korean and Bangla words, defined below:</p>
+
+<pre><code class="language-python">lstm_out = 5
+# define the model
+model = Sequential()
+model.add(Embedding(vocab_size, 8, input_length=max_length))
+model.add(LSTM(lstm_out, recurrent_initializer=&quot;random_uniform&quot;, bias_initializer=&quot;zeros&quot;, dropout=0.2, recurrent_dropout=0.2, kernel_regularizer=l2(0.01), recurrent_regularizer=l2(0.01), bias_regularizer=l2(0.01)))
+model.add(Dense(2, activation='softmax'))
+
+# compile the model
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+# summarize the model
+print(model.summary())
+</code></pre>
+
+<pre><code>Model: &quot;sequential_5&quot;
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_5 (Embedding)      (None, 10, 8)             1600000   
+_________________________________________________________________
+lstm_5 (LSTM)                (None, 5)                 280       
+_________________________________________________________________
+dense_5 (Dense)              (None, 2)                 12        
+=================================================================
+Total params: 1,600,292
+Trainable params: 1,600,292
+Non-trainable params: 0
+_________________________________________________________________
+None
+</code></pre>
+
+<p>Early stopping the training if validation loss starts to converge (wait for 50 epochs to make sure validation loss is indeed converging).</p>
+
+<pre><code class="language-python">from keras.callbacks import EarlyStopping
+class ThresholdEarlyStopping(EarlyStopping):
+    def __init__(self, monitor='val_loss', min_epochs=10,
+                 threshold=0.995, increase=1.75, verbose=0, mode='auto'):
+
+        super(ThresholdEarlyStopping, self).__init__(
+            monitor=monitor,
+            patience=min_epochs,
+            verbose=verbose,
+            mode=mode
+        )
+
+        self.threshold = threshold
+        self.increase = increase
+
+    def on_epoch_end(self, epoch, logs={}):
+        if epoch &lt; self.patience:
+            current = logs.get(self.monitor)
+            if current is None:
+                warnings.warn('Early stopping requires %s to be available!'
+                              % (self.monitor), RuntimeWarning)
+
+            if self.monitor_op(current, self.best):
+                # if current val_loss within 0.5% margin of the best(min) val_loss, 
+                # add some grace to the patience to monitor if val_loss is indeed converging 
+                if self.monitor_op(current, self.threshold*self.best):
+                    self.patience = max(self.patience, epoch*self.increase)
+                self.best = current
+
+        else:
+            if self.verbose &gt; 0:
+                print('Epoch %05d: early stopping' % (epoch))
+
+            self.model.stop_training = True
+</code></pre>
+
+<pre><code class="language-python"># fit the model
+print(labelvec[:5])
+history = model.fit(padded_docs, labelvec, batch_size=2000, validation_split=0.1, epochs=500, verbose=1, callbacks=[ThresholdEarlyStopping(verbose=1, min_epochs=50)])
+</code></pre>
+
+<pre><code>[[0 1]
+ [0 1]
+ [0 1]
+ [1 0]
+ [0 1]]
+Train on 90000 samples, validate on 10000 samples
+Epoch 1/500
+90000/90000 [==============================] - 3s 36us/step - loss: 0.8363 - acc: 0.5272 - val_loss: 0.8187 - val_acc: 0.5392
+Epoch 2/500
+90000/90000 [==============================] - 2s 20us/step - loss: 0.8040 - acc: 0.6119 - val_loss: 0.7891 - val_acc: 0.8677
+Epoch 3/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.7690 - acc: 0.7265 - val_loss: 0.7366 - val_acc: 0.7410
+Epoch 4/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.6231 - acc: 0.8391 - val_loss: 0.4600 - val_acc: 0.9033
+Epoch 5/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.4186 - acc: 0.9046 - val_loss: 0.3429 - val_acc: 0.9264
+Epoch 6/500
+90000/90000 [==============================] - 3s 30us/step - loss: 0.3586 - acc: 0.9267 - val_loss: 0.3144 - val_acc: 0.9287
+Epoch 7/500
+90000/90000 [==============================] - 2s 26us/step - loss: 0.3318 - acc: 0.9333 - val_loss: 0.2973 - val_acc: 0.9321
+Epoch 8/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.3141 - acc: 0.9364 - val_loss: 0.2852 - val_acc: 0.9333
+Epoch 9/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.3016 - acc: 0.9381 - val_loss: 0.2767 - val_acc: 0.9336
+Epoch 10/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2936 - acc: 0.9392 - val_loss: 0.2698 - val_acc: 0.9354
+Epoch 11/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2847 - acc: 0.9410 - val_loss: 0.2642 - val_acc: 0.9349
+Epoch 12/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2782 - acc: 0.9411 - val_loss: 0.2615 - val_acc: 0.9343
+Epoch 13/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2735 - acc: 0.9414 - val_loss: 0.2561 - val_acc: 0.9346
+Epoch 14/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2698 - acc: 0.9422 - val_loss: 0.2525 - val_acc: 0.9332
+Epoch 15/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2660 - acc: 0.9426 - val_loss: 0.2496 - val_acc: 0.9342
+Epoch 16/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2626 - acc: 0.9429 - val_loss: 0.2473 - val_acc: 0.9353
+Epoch 17/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2595 - acc: 0.9429 - val_loss: 0.2447 - val_acc: 0.9358
+Epoch 18/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2582 - acc: 0.9428 - val_loss: 0.2424 - val_acc: 0.9346
+Epoch 19/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2557 - acc: 0.9430 - val_loss: 0.2407 - val_acc: 0.9351
+Epoch 20/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2530 - acc: 0.9425 - val_loss: 0.2394 - val_acc: 0.9334
+Epoch 21/500
+90000/90000 [==============================] - 3s 28us/step - loss: 0.2517 - acc: 0.9434 - val_loss: 0.2382 - val_acc: 0.9358
+Epoch 22/500
+90000/90000 [==============================] - 3s 28us/step - loss: 0.2502 - acc: 0.9431 - val_loss: 0.2367 - val_acc: 0.9351
+Epoch 23/500
+90000/90000 [==============================] - 2s 26us/step - loss: 0.2499 - acc: 0.9436 - val_loss: 0.2349 - val_acc: 0.9355
+Epoch 24/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2478 - acc: 0.9431 - val_loss: 0.2341 - val_acc: 0.9385
+Epoch 25/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2460 - acc: 0.9430 - val_loss: 0.2333 - val_acc: 0.9337
+Epoch 26/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2449 - acc: 0.9435 - val_loss: 0.2325 - val_acc: 0.9352
+Epoch 27/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2443 - acc: 0.9425 - val_loss: 0.2313 - val_acc: 0.9344
+Epoch 28/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2436 - acc: 0.9431 - val_loss: 0.2309 - val_acc: 0.9348
+Epoch 29/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2417 - acc: 0.9433 - val_loss: 0.2297 - val_acc: 0.9352
+Epoch 30/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2424 - acc: 0.9431 - val_loss: 0.2292 - val_acc: 0.9344
+Epoch 31/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2394 - acc: 0.9435 - val_loss: 0.2287 - val_acc: 0.9346
+Epoch 32/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2396 - acc: 0.9434 - val_loss: 0.2281 - val_acc: 0.9329
+Epoch 33/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2399 - acc: 0.9428 - val_loss: 0.2281 - val_acc: 0.9358
+Epoch 34/500
+90000/90000 [==============================] - 2s 21us/step - loss: 0.2386 - acc: 0.9431 - val_loss: 0.2272 - val_acc: 0.9334
+Epoch 35/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2372 - acc: 0.9433 - val_loss: 0.2266 - val_acc: 0.9349
+Epoch 36/500
+90000/90000 [==============================] - 3s 29us/step - loss: 0.2360 - acc: 0.9433 - val_loss: 0.2264 - val_acc: 0.9333
+Epoch 37/500
+90000/90000 [==============================] - 2s 25us/step - loss: 0.2360 - acc: 0.9437 - val_loss: 0.2255 - val_acc: 0.9351
+Epoch 38/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2367 - acc: 0.9433 - val_loss: 0.2251 - val_acc: 0.9325
+Epoch 39/500
+90000/90000 [==============================] - 2s 25us/step - loss: 0.2343 - acc: 0.9430 - val_loss: 0.2243 - val_acc: 0.9336
+Epoch 40/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2336 - acc: 0.9432 - val_loss: 0.2241 - val_acc: 0.9340
+Epoch 41/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2333 - acc: 0.9434 - val_loss: 0.2234 - val_acc: 0.9332
+Epoch 42/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2328 - acc: 0.9433 - val_loss: 0.2234 - val_acc: 0.9344
+Epoch 43/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2331 - acc: 0.9435 - val_loss: 0.2225 - val_acc: 0.9347
+Epoch 44/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2324 - acc: 0.9434 - val_loss: 0.2221 - val_acc: 0.9338
+Epoch 45/500
+90000/90000 [==============================] - 2s 27us/step - loss: 0.2316 - acc: 0.9430 - val_loss: 0.2216 - val_acc: 0.9331
+Epoch 46/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2302 - acc: 0.9427 - val_loss: 0.2211 - val_acc: 0.9341
+Epoch 47/500
+90000/90000 [==============================] - 2s 22us/step - loss: 0.2310 - acc: 0.9423 - val_loss: 0.2208 - val_acc: 0.9339
+Epoch 48/500
+90000/90000 [==============================] - 2s 23us/step - loss: 0.2290 - acc: 0.9427 - val_loss: 0.2205 - val_acc: 0.9341
+Epoch 49/500
+90000/90000 [==============================] - 2s 25us/step - loss: 0.2302 - acc: 0.9424 - val_loss: 0.2200 - val_acc: 0.9337
+Epoch 50/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2288 - acc: 0.9424 - val_loss: 0.2197 - val_acc: 0.9337
+Epoch 51/500
+90000/90000 [==============================] - 2s 24us/step - loss: 0.2282 - acc: 0.9430 - val_loss: 0.2195 - val_acc: 0.9349
+Epoch 00050: early stopping
+</code></pre>
+
+<p>check for overfitting by comparing the validation loss with training loss:</p>
+
+<pre><code class="language-python">plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['training loss', 'validation loss'], loc='best')
+plt.show()
+</code></pre>
+
+<p><img src="transliterateLangDetect_56_0.png" alt="png" /></p>
+
+<p>The model is trained.</p>
+
+<p>evaluating the LSTM language classifier with testing data (with default decision boundary = 0.5):</p>
+
+<pre><code class="language-python"># evaluate the model
+loss, accuracy = model.evaluate(padded_docs_test, labelvec_test, verbose=0)
+print('Accuracy: %.2f %%' % (accuracy*100))
+</code></pre>
+
+<pre><code>Accuracy: 93.36 %
+</code></pre>
+
+<p>Optimizing the decision boundary of the LSTM classifier for best accuracy using ROC curve:</p>
+
+<pre><code class="language-python">from sklearn.metrics import roc_curve, auc
+labelvec_pred = model.predict(padded_docs_test)
+fpr, tpr, cut = roc_curve(labelvec_test.ravel(), labelvec_pred.ravel())
+AUC = auc(fpr, tpr)
+</code></pre>
+
+<pre><code class="language-python">labelvec_pred[:5], labelvec_test[:5, 0]
+</code></pre>
+
+<pre><code>(array([[0.00991759, 0.99008244],
+        [0.1209347 , 0.8790653 ],
+        [0.00542074, 0.9945793 ],
+        [0.995492  , 0.00450803],
+        [0.00368168, 0.99631834]], dtype=float32), array([0, 0, 0, 1, 0]))
+</code></pre>
+
+<pre><code class="language-python">plt.figure(1)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.plot(fpr, tpr, label='(AUC = {:.3f})'.format(AUC))
+plt.xlabel('False positive rate')
+plt.ylabel('True positive rate')
+plt.title('ROC curve')
+plt.legend(loc='best')
+plt.show()
+</code></pre>
+
+<p><img src="transliterateLangDetect_63_0.png" alt="png" /></p>
+
+<p>Closest point to (0,1) on the ROC above will have the optimal threshold (which reduces error conributed from both type I and II errors):</p>
+
+<pre><code class="language-python">tprDist = np.square(tpr-1)
+fprDist = np.square(fpr)
+DistFromPerfectEff = tprDist + fprDist
+
+Optimum_cut = cut[DistFromPerfectEff.argmin()]
+Optimum_cut
+</code></pre>
+
+<pre><code>0.4986838
+</code></pre>
+
+<p>Optimal threshold at 0.5 (default cut for accuracy).</p>
+
+<h2 id="storing-the-model">Storing the model</h2>
+
+<pre><code class="language-python">from keras.models import model_from_json
+
+#model to json
+model_json = model.to_json()
+json_file = open(&quot;translit.json&quot;, &quot;w&quot;)
+json_file.write(model_json)
+#weights to h5
+model.save_weights(&quot;translit.h5&quot;)
+print(&quot;model saved to disk&quot;)
+</code></pre>
+
+<pre><code>model saved to disk
+</code></pre>
+
+<h2 id="loading-the-model">Loading the model</h2>
+
+<pre><code class="language-python"># load model
+jfile = open('translit.json', 'r')
+loaded_model_json = jfile.read()
+jfile.close()
+loaded_model = model_from_json(loaded_model_json)
+# load weights
+loaded_model.load_weights(&quot;translit.h5&quot;)
+print(&quot;Loaded model from disk&quot;)
+# compile the loaded model
+loaded_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+</code></pre>
+
+<pre><code>Loaded model from disk
+</code></pre>
+
+<p>The loaded model reproduces the accuracy for transliterated words:</p>
+
+<pre><code class="language-python"># evaluate the loaded model
+loaded_loss, loaded_accuracy = loaded_model.evaluate(padded_docs_test, labelvec_test, verbose=0)
+print('Accuracy: %.2f %%' % (loaded_accuracy*100))
+</code></pre>
+
+<pre><code>Accuracy: 93.36 %
+</code></pre>
+
+<p>Using Maximum Likelihood Estimator to predict the language of an entire transliterated sentence, from the individual scores of the words in that sentence:</p>
+
+<p>$$Prediced\ Language = \underset{l}{\operatorname{argmax}} \sum<em>{i=1}^{all\ words\ in\ sentence} log(P(word</em>{i}|l))$$</p>
+
+<p>where $l \in { Korean, Bengali } $</p>
+
+<p>and $P(word|l)$ is output score of the word from the LSTM classifier for language $l$</p>
+
+<pre><code class="language-python">import string
+
+def TextToInput(text):
+    text = text.translate(str.maketrans('', '', string.punctuation)).split()
+    text = [PhoneticWordSplit(w) for w in text]
+    return IntEncodeWords(text)
+</code></pre>
+
+<pre><code class="language-python">def PredictLanguage(text):
+    lstminput = TextToInput(text)
+    p = model.predict(lstminput)
+    langdict = {0:&quot;Bengali&quot;, 1:&quot;Korean&quot;}
+    mle = np.log(p)
+    mle = np.sum(mle, axis=0)
+    return langdict[np.argmax(mle)]
+</code></pre>
+
+<pre><code class="language-python">inputtext = &quot;cheoeumbuteo geudaeyeossjyo \
+naege dagaol han saram \
+dan han beonui seuchimedo \
+nae nunbicci mareul hajyo&quot;
+
+#&quot;Amake naam~ #ki?!@&quot;
+PredictLanguage(inputtext)
+</code></pre>
+
+<pre><code>'Korean'
+</code></pre>
+
+<h2 id="results">Results</h2>
+
+<p>The LSTM classifier using phonetic syllables as input features is able to give an optimum accuracy of ~93 % with AUC = 0.985.</p>
+
+<h3 id="next-steps">Next steps:</h3>
+
+<ul>
+<li><p>Create a web-app to run the NLP model and host on google cloud.</p></li>
+
+<li><p>Perform k-fold cross-validation to better estimate classifier&rsquo;s performance</p></li>
+
+<li><p>Should test vanilla RNN too since the input string of phonetic syllables are not too long</p></li>
+
+<li><p>Improve cleaning to get rid of non-lexical vocables in the corpus to train a better discriminator</p></li>
+
+<li><p>Try to find other sources (than song lyrics) for Korean and Bangla transliterated texts</p></li>
+
+<li><p>Think of a better way to reduce even further English words that are contaminating the corpuses</p></li>
+
+<li><h2 id="add-other-non-roman-langauges">Add other non-roman langauges</h2></li>
+</ul>
+
+    </div>
+
+    
+
+
+    
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  
+  
+    
+  
+  
+  <div class="media author-card">
+    
+      
+      <img class="portrait mr-3" src="/authors/admin/avatar_hua028ea342a6fab36f259da71e624af9a_478653_250x250_fill_q90_lanczos_center.JPG" alt="Avatar">
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://sen-sourav.github.io">Sourav Sen</a></h5>
+      
+      
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+    <li>
+      <a href="mailto:sourav.sen@duke.edu" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/sourav-sen-duke" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=iPFv6TEAAAAJ" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/sen-sourav" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+    
+
+
+    
+    
+
+    
+    
+    
+
+    
+    
+    
+
+    
+    
+    
+
+  </div>
+</article>
+
+
+
+      
+
+    
+    
+    
+    <script src="/js/mathjax-config.js"></script>
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js" integrity="sha256-0w92bcB21IY5+rGI84MGj52jNfHNbXVeQLrZ0CGdjNY=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js" integrity="sha256-aYTdUrn6Ow1DDgh5JTc3aDGnnju48y/1c8s1dgkYPQ8=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/python.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/c&#43;&#43;.min.js"></script>
+        
+      
+
+      
+      
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_CHTML-full" integrity="sha256-GhM+5JHb6QUzOQPXSJLEWP7R73CbkisjzK5Eyij4U9w=" crossorigin="anonymous" async></script>
+      
+    
+
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.84d185001460a90007fb2f6dcc66616e.js"></script>
+
+    
+
+
+
+
+
+
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
