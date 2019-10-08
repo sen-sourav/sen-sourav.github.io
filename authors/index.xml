@@ -77,14 +77,6 @@
     </item>
     
     <item>
-      <title>Sourav Sen</title>
-      <link>https://sen-sourav.github.io/authors/sourav-sen/</link>
-      <pubDate>Thu, 27 Jul 2017 00:00:00 +0000</pubDate>
-      <guid>https://sen-sourav.github.io/authors/sourav-sen/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Ashutosh Kotwal</title>
       <link>https://sen-sourav.github.io/authors/ashutosh-kotwal/</link>
       <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
@@ -173,10 +165,18 @@
     </item>
     
     <item>
-      <title>Shin-Shan Yu</title>
+      <title>Shin-shan Yu</title>
       <link>https://sen-sourav.github.io/authors/shin-shan-yu/</link>
       <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
       <guid>https://sen-sourav.github.io/authors/shin-shan-yu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Sourav Sen</title>
+      <link>https://sen-sourav.github.io/authors/sourav-sen/</link>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/authors/sourav-sen/</guid>
       <description></description>
     </item>
     

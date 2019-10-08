@@ -5,20 +5,12 @@
     <link>https://sen-sourav.github.io/authors/sourav-sen/</link>
       <atom:link href="https://sen-sourav.github.io/authors/sourav-sen/index.xml" rel="self" type="application/rss+xml" />
     <description>Sourav Sen</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Thu, 27 Jul 2017 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sun, 01 Jan 2017 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://sen-sourav.github.io/img/icon-192.png</url>
       <title>Sourav Sen</title>
       <link>https://sen-sourav.github.io/authors/sourav-sen/</link>
     </image>
-    
-    <item>
-      <title>Effects of reduced pixel charge information in ATLAS tracking</title>
-      <link>https://sen-sourav.github.io/talk/usatlas17/</link>
-      <pubDate>Thu, 27 Jul 2017 00:00:00 +0000</pubDate>
-      <guid>https://sen-sourav.github.io/talk/usatlas17/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>Detectors for Superboosted $τ $-leptons at Future Circular Colliders</title>
@@ -37,14 +29,6 @@
     </item>
     
     <item>
-      <title>Detectors for Superboosted tau-leptons at Future Circular Colliders</title>
-      <link>https://sen-sourav.github.io/talk/ichep16/</link>
-      <pubDate>Sat, 06 Aug 2016 00:00:00 +0000</pubDate>
-      <guid>https://sen-sourav.github.io/talk/ichep16/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Implications of nonlinearity for spherically symmetric accretion</title>
       <link>https://sen-sourav.github.io/publication/sen-2014-implications/</link>
       <pubDate>Wed, 01 Jan 2014 00:00:00 +0000</pubDate>
@@ -57,6 +41,22 @@
       <link>https://sen-sourav.github.io/publication/majumder-2012-modified/</link>
       <pubDate>Sun, 01 Jan 2012 00:00:00 +0000</pubDate>
       <guid>https://sen-sourav.github.io/publication/majumder-2012-modified/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Detectors for Superboosted tau-leptons at Future Circular Colliders</title>
+      <link>https://sen-sourav.github.io/talk/ichep16/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/talk/ichep16/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Effects of reduced pixel charge information in ATLAS tracking</title>
+      <link>https://sen-sourav.github.io/talk/usatlas17/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/talk/usatlas17/</guid>
       <description></description>
     </item>
     
