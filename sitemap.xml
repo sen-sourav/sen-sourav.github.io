@@ -68,6 +68,31 @@
   </url>
   
   <url>
+    <loc>https://sen-sourav.github.io/categories/</loc>
+    <lastmod>2019-01-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sen-sourav.github.io/categories/invited-talk/</loc>
+    <lastmod>2019-01-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sen-sourav.github.io/authors/sourav-sen/</loc>
+    <lastmod>2019-01-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sen-sourav.github.io/talk/pnp/</loc>
+    <lastmod>2019-01-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sen-sourav.github.io/talk/</loc>
+    <lastmod>2019-01-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://sen-sourav.github.io/authors/atlas-collaboration/</loc>
     <lastmod>2019-01-01T00:00:00+00:00</lastmod>
   </url>
@@ -80,6 +105,11 @@
   <url>
     <loc>https://sen-sourav.github.io/publication/yeh-2018-ujb/</loc>
     <lastmod>2018-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sen-sourav.github.io/talk/usatlas17/</loc>
+    <lastmod>2017-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -158,11 +188,6 @@
   </url>
   
   <url>
-    <loc>https://sen-sourav.github.io/authors/sourav-sen/</loc>
-    <lastmod>2017-01-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://sen-sourav.github.io/publication/yu-2017-study/</loc>
     <lastmod>2017-01-01T00:00:00+00:00</lastmod>
   </url>
@@ -170,6 +195,11 @@
   <url>
     <loc>https://sen-sourav.github.io/authors/sv-chekanov/</loc>
     <lastmod>2017-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sen-sourav.github.io/talk/ichep16/</loc>
+    <lastmod>2016-08-06T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -197,35 +227,11 @@
   </url>
   
   <url>
-    <loc>https://sen-sourav.github.io/categories/</loc>
-  </url>
-  
-  <url>
-    <loc>https://sen-sourav.github.io/talk/ichep16/</loc>
-  </url>
-  
-  <url>
-    <loc>https://sen-sourav.github.io/talk/usatlas17/</loc>
-  </url>
-  
-  <url>
-    <loc>https://sen-sourav.github.io/categories/invited-talk/</loc>
-  </url>
-  
-  <url>
     <loc>https://sen-sourav.github.io/post/</loc>
   </url>
   
   <url>
-    <loc>https://sen-sourav.github.io/talk/pnp/</loc>
-  </url>
-  
-  <url>
     <loc>https://sen-sourav.github.io/tags/</loc>
-  </url>
-  
-  <url>
-    <loc>https://sen-sourav.github.io/talk/</loc>
   </url>
   
 </urlset>

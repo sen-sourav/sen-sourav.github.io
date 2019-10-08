@@ -5,7 +5,7 @@
     <link>https://sen-sourav.github.io/categories/invited-talk/</link>
       <atom:link href="https://sen-sourav.github.io/categories/invited-talk/index.xml" rel="self" type="application/rss+xml" />
     <description>Invited talk</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Wed, 23 Jan 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>https://sen-sourav.github.io/img/icon-192.png</url>
       <title>Invited talk</title>
@@ -13,18 +13,18 @@
     </image>
     
     <item>
-      <title>Effects of reduced pixel charge information in ATLAS tracking</title>
-      <link>https://sen-sourav.github.io/talk/usatlas17/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://sen-sourav.github.io/talk/usatlas17/</guid>
+      <title>Status of improvements in CTIDE Neural Networks</title>
+      <link>https://sen-sourav.github.io/talk/pnp/</link>
+      <pubDate>Wed, 23 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/talk/pnp/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Status of improvements in CTIDE Neural Networks</title>
-      <link>https://sen-sourav.github.io/talk/pnp/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://sen-sourav.github.io/talk/pnp/</guid>
+      <title>Effects of reduced pixel charge information in ATLAS tracking</title>
+      <link>https://sen-sourav.github.io/talk/usatlas17/</link>
+      <pubDate>Thu, 27 Jul 2017 00:00:00 +0000</pubDate>
+      <guid>https://sen-sourav.github.io/talk/usatlas17/</guid>
       <description></description>
     </item>
     
