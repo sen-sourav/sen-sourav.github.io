@@ -5,1151 +5,12 @@
     <link>https://sen-sourav.github.io/</link>
       <atom:link href="https://sen-sourav.github.io/index.xml" rel="self" type="application/rss+xml" />
     <description>Sourav&#39;s</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Tue, 08 Oct 2019 01:27:10 -0400</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Tue, 08 Oct 2019 01:22:11 -0400</lastBuildDate>
     <image>
       <url>https://sen-sourav.github.io/img/icon-192.png</url>
       <title>Sourav&#39;s</title>
       <link>https://sen-sourav.github.io/</link>
     </image>
-    
-    <item>
-      <title>Postdoc Success Indicator</title>
-      <link>https://sen-sourav.github.io/project/postdocsuccess/</link>
-      <pubDate>Tue, 08 Oct 2019 01:27:10 -0400</pubDate>
-      <guid>https://sen-sourav.github.io/project/postdocsuccess/</guid>
-      <description>
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;%%HTML
-&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
-table.dataframe td, table.dataframe th {
-    border: 1px  black solid !important;
-  color: black !important;
-}
-&amp;lt;/style&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;style type=&#34;text/css&#34;&gt;
-table.dataframe td, table.dataframe th {
-    border: 1px  black solid !important;
-  color: black !important;
-}
-&lt;/style&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://phdcomics.com/comics/archive/phd082313s.gif&#34;&gt;&lt;/p&gt;
-
-&lt;p&gt;As an experimental High Energy Physics (hep-ex) grad student, I often wonder which university/national lab should I choose for doing a postdoc to increase my odds of getting a faculty position, if I plan to stay in academia. But unlike other sub-fields in Physics, we have huge world-wide collaborations for hep-ex experiments like the Large Hadron Collider. In such collaborative environment, it is not very clear if it really matters where one does his/her postdoc, in terms of finding an academic faculty (research scientist) position. It might not be hard to convince oneself that there is actually no such correlation between a postdoc&amp;rsquo;s affiliation and possibility of finding an academic job (faculty position) eventually. This has prompted me to put this hypothesis to test. So, let&amp;rsquo;s explore here whether such a correlation between a postdoc&amp;rsquo;s affiliation and future success in finding an academic faculty position in hep-ex exists.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import re
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-%matplotlib inline
-from sklearn.linear_model import LogisticRegression
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;data-collection&#34;&gt;Data collection&lt;/h2&gt;
-
-&lt;p&gt;hepexrumor (&lt;a href=&#34;https://sites.google.com/site/hepexrumor/&#34; target=&#34;_blank&#34;&gt;https://sites.google.com/site/hepexrumor/&lt;/a&gt;) is a popular unofficial site which has latest rumors about the hep-ex jobs (in the US and ouside). I parse this website for getting the job rumors from 2005-2019. For this short study, I did not consider temporal variation in job patterns and combined the data of all the years.&lt;/p&gt;
-
-&lt;p&gt;I use the latest affiliation of a postdoc while applying for job. I only consider the postdocs who cleared the short-list round for a job as the total candidate pool, with a presumptuous assumption that postdocs not clearing the shortlist were not serious candidates for the job.&lt;/p&gt;
-
-&lt;p&gt;Parsing hepexrumor:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;hepexjobsite = &#39;https://sites.google.com/site/hepexrumor/&#39;
-year = {2005: &#39;2005-rumor&#39;  ,
-        2006: &#39;2006-rumor&#39;  ,
-        2007: &#39;2007-rumor&#39;  ,
-        2008: &#39;2008-rumor&#39;  ,
-        2009: &#39;2009-rumor-1&#39;,
-        2010: &#39;2009-rumor&#39;  ,
-        2011: &#39;2011-rumors&#39; ,
-        2012: &#39;2012-rumors&#39; ,
-        2013: &#39;2013-rumors&#39; ,
-        2014: &#39;2014-rumors&#39; ,
-        2015: &#39;2015-rumors&#39; ,
-        2016: &#39;2016-rumors&#39; ,
-        2017: &#39;2016-2017&#39;   ,
-        2018: &#39;2018-rumors&#39; ,
-        2019: &#39;2019-rumors&#39; }
-df = {}
-for i in range(2005,2020):
-    p = pd.read_html(hepexjobsite+year[i])
-    print(i, len(p))
-    if (i &amp;lt; 2016 ):
-        tUS = p[3].iloc[1:]
-        tUS.columns = p[3].iloc[0]
-    else:
-        tnonUS = p[4].iloc[1:]
-        tnonUS.columns = p[4].iloc[0]
-        tnonUS = tnonUS.drop(columns=[&#39;Field&#39;])
-        tUS = p[5].iloc[1:]
-        tUS.columns = p[5].iloc[0]
-        tUS = tUS.drop(columns=[&#39;Field&#39;])
-        tUS.append(tnonUS, ignore_index=True)
-    tUS.columns = [&amp;quot;Institution&amp;quot;, &amp;quot;Short List&amp;quot;, &amp;quot;Offers&amp;quot;]
-    df[i] = tUS
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;2005 4
-2006 4
-2007 4
-2008 4
-2009 4
-2010 4
-2011 4
-2012 4
-2013 4
-2014 4
-2015 4
-2016 6
-2017 6
-2018 6
-2019 6
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;df[2017].head()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;div&gt;
-&lt;style scoped&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
-&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
-  &lt;thead&gt;
-    &lt;tr style=&#34;text-align: right;&#34;&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;Institution&lt;/th&gt;
-      &lt;th&gt;Short List&lt;/th&gt;
-      &lt;th&gt;Offers&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;Nebraska&lt;/td&gt;
-      &lt;td&gt;Jamie Antonelli (Ohio State) [CMS] Clemens Lan...&lt;/td&gt;
-      &lt;td&gt;Frank Golf (accepted)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;Wilson Fellowship&lt;/td&gt;
-      &lt;td&gt;Joseph Zennamo (Chicago) [MicroBooNE, SBND] Mi...&lt;/td&gt;
-      &lt;td&gt;Minerba Betancourt (accepted) Nhan Tran (accep...&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;Alabama&lt;/td&gt;
-      &lt;td&gt;Carl Pfendner (Ohio State) [ARA, EVA]&lt;/td&gt;
-      &lt;td&gt;NaN&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;Cornell (accelerators)&lt;/td&gt;
-      &lt;td&gt;NaN&lt;/td&gt;
-      &lt;td&gt;NaN&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;Brookhaven&lt;/td&gt;
-      &lt;td&gt;John Alison (Chicago) [ATLAS] Viviana Cavalier...&lt;/td&gt;
-      &lt;td&gt;Viviana Cavaliere (accepted)&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;h2 id=&#34;data-cleaning&#34;&gt;Data cleaning&lt;/h2&gt;
-
-&lt;p&gt;There is ambiguity associated to the names of some of the universities and labs, like Fermilab is listed as &amp;lsquo;Fermilab&amp;rsquo; in some places and &amp;lsquo;FNAL&amp;rsquo; elsewhere. The function below removes this ambiguity by replacing the ambiguous names to a standard name for the organizations:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def UniNameAmbiguityFix(dfk): 
-    Uni_name_ambiguity = {&#39;Argonne&#39;: &#39;ANL&#39;,
-                          &#39;Boston University&#39;: &#39;Boston U&#39;,
-                          &#39;BU&#39;: &#39;Boston U&#39;,
-                          &#39;Brown University&#39;: &#39;Brown&#39;,
-                          &#39;Cal Tech&#39;: &#39;Caltech&#39;,
-                          &#39;Carnegie&#39;: &#39;Carnegie Mellon&#39;,
-                          &#39;Colorado State University&#39;: &#39;Colorado State&#39;,
-                          &#39;Fermilab&#39;: &#39;FNAL&#39;,
-                          &#39;FNAL/Chicago&#39;: &#39;FNAL&#39;,
-                          &#39;Industry/Fermilab&#39;: &#39;FNAL&#39;,
-                          &#39;Chicago/FNAL&#39;: &#39;FNAL&#39;,
-                          &#39;Göttingen&#39;: &#39;Gottingen&#39;,
-                          &#39;Imperial&#39;: &#39;Imperial College London&#39;,
-                          &#39;Indiana&#39;: &#39;Indiana University&#39;, 
-                          &#39;KSU&#39;: &#39;Kansas State&#39;,
-                          &#39;Los Alamos&#39;: &#39;LANL&#39;,
-                          &#39;LBL&#39;: &#39;LBNL&#39;,
-                          &#39;MSU&#39;: &#39;Michigan State&#39;, 
-                          &#39;Northeastern University&#39;: &#39;Northeastern&#39;,
-                          &#39;Northwestern University&#39;: &#39;Northwestern&#39;,
-                          &#39;OSU&#39;: &#39;Ohio State&#39;,
-                          &#39;SUNY Stony Brook&#39;: &#39;Stony Brook&#39;,
-                          &#39;Texas A&amp;amp;M&#39;: &#39;TAMU&#39;,
-                          &#39;Triumf&#39;: &#39;TRIUMF&#39;,
-                          &#39;U Chicago&#39;: &#39;UChicago&#39;,
-                          &#39;Chicago&#39;: &#39;UChicago&#39;,
-                          &#39;University of Chicago&#39;: &#39;UChicago&#39;,
-                          &#39;Berkeley&#39;: &#39;UC Berkeley&#39;,
-                          &#39;University of Colorado Boulder&#39;: &#39;UC Boulder&#39;,
-                          &#39;CU Boulder&#39;: &#39;UC Boulder&#39;,
-                          &#39;Colorado&#39;: &#39;UC Boulder&#39;,
-                          &#39;Davis&#39;: &#39;UC Davis&#39;,
-                          &#39;Irvine&#39;: &#39;UC Irvine&#39;,
-                          &#39;UCSD&#39;: &#39;UC San Diego&#39;,
-                          &#39;UCSB&#39;: &#39;UC Santa Barbara&#39;,
-                          &#39;UCSC&#39;: &#39;UC Santa Cruz&#39;,
-                          &#39;UIC&#39;: &#39;University of Illinois Chicago&#39;,
-                          &#39;University of Illinois Urbana-Champaign&#39;: &#39;UIUC&#39;,
-                          &#39;University of North Carolina&#39;: &#39;UNC&#39;,
-                          &#39;University of Pennsylvania&#39;: &#39;UPenn&#39;,
-                          &#39;University of Texas Austin&#39;: &#39;UT Austin&#39;, 
-                          &#39;Florida&#39;: &#39;University of Florida&#39;,
-                          &#39;Geneva&#39;: &#39;University of Geneva&#39;,
-                          &#39;Hawaii&#39;: &#39;University of Hawaii&#39;,
-                          &#39;Maryland&#39;: &#39;University of Maryland&#39;, 
-                          &#39;Michigan&#39;: &#39;University of Michigan&#39;,
-                          &#39;Minnesota&#39;: &#39;University of Minnesota&#39;,
-                          &#39;Sheffield&#39;: &#39;University of Sheffield&#39;,
-                          &#39;Victoria&#39;: &#39;University of Victoria&#39;,
-                          &#39;Virginia&#39;: &#39;University of Virginia&#39;,
-                          &#39;Washington&#39;: &#39;University of Washington&#39;,
-                          &#39;University of Wisconsin Madison&#39;: &#39;UW Madison&#39;,
-                          &#39;Wisconsin&#39;: &#39;UW Madison&#39;,
-                          &#39;UW&#39;: &#39;UW Madison&#39;,
-                          &#39;UW-Madison&#39;: &#39;UW Madison&#39;}
-    Uni_name_ambiguity.keys()
-    dfk = dfk.replace({&#39;Affiliation&#39;: Uni_name_ambiguity})
-    dfk = dfk.groupby([&#39;Applicant&#39;, &#39;Affiliation&#39;])[&#39;Attempts&#39;].sum().reset_index()
-    return dfk
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;applicant-stats&#34;&gt;Applicant stats&lt;/h3&gt;
-
-&lt;p&gt;Extracting tables for applicant job performance (along with their latest affiliation at the time of job application) from tables for job results.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTable = {}
-for i in range(2005, 2020):
-    attempt = df[i][&#39;Short List&#39;].str.split(&amp;quot;\)&amp;quot;, expand=True)
-    attempt = attempt.unstack()
-    attempt = attempt.str.split(r&amp;quot;\[.*?\]&amp;quot;).str.join(&#39;&#39;)
-    attempt = attempt.str.strip()
-    attempt = attempt.value_counts()
-    attempt = attempt.to_frame()
-    attempt.reset_index(level=0, inplace=True)
-    attempt.columns = [&#39;Applicant&#39;, &#39;Attempts&#39;]
-    attemptTable = attempt[&#39;Applicant&#39;].str.split(&#39;(&#39;, expand=True)
-    attemptTable.columns = [&#39;Applicant&#39;, &#39;Affiliation&#39;]
-    attemptTable[&#39;Attempts&#39;] = attempt[&#39;Attempts&#39;]
-    attemptTable = attemptTable.iloc[1:]
-    indexDrop = attemptTable[attemptTable[&#39;Applicant&#39;].str.contains(&amp;quot;\)&amp;quot; or &amp;quot;\(&amp;quot; or &amp;quot;[&amp;quot; or &amp;quot;]&amp;quot;)].index
-    attemptTable.drop(indexDrop , inplace=True)
-    attemptTable.Affiliation.str.strip()
-    attemptTable = UniNameAmbiguityFix(attemptTable)
-
-    offerTable = df[i][&#39;Offers&#39;].str.split(r&amp;quot;\(.*?\)&amp;quot;, expand=True)
-    offerTable = offerTable.unstack()
-    offerTable = offerTable.str.strip()
-    offerTable = offerTable.value_counts()
-    offerTable = offerTable.to_frame()
-    offerTable.reset_index(level=0, inplace=True)
-    offerTable.columns = [&#39;Applicant&#39;, &#39;Offers&#39;]
-    offerTable[&#39;Applicant&#39;] = offerTable[&#39;Applicant&#39;].str.replace(u&#39;† \xa0&#39;, u&#39;&#39;)
-    offerTable = offerTable.iloc[1:]
-
-    attemptTable.Applicant = attemptTable.Applicant.str.strip()
-    offerTable.Applicant   = offerTable.Applicant.str.strip()
-
-    ApplicantTable[i] = attemptTable.merge(offerTable, how=&#39;left&#39;, left_on=&#39;Applicant&#39;, right_on=&#39;Applicant&#39;)
-    ApplicantTable[i] = ApplicantTable[i].fillna(0)
-    ApplicantTable[i].Offers = ApplicantTable[i].Offers.astype(int)
-    #applicants with no affiliations listed are dropped
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;].str.strip() == &amp;quot;&amp;quot;].index , inplace=True)
-    #blank applicant dropped
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.strip() == &amp;quot;&amp;quot;].index , inplace=True)
-    #theory or non-hep jobs to be dropped
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.lower().str.contains(&#39;theory&#39;)].index , inplace=True)
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.lower().str.contains(&#39;hep&#39;)].index , inplace=True)
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;IAS&#39;].index , inplace=True)
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;theory&#39;].index , inplace=True)
-    #other misc. cleaning
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;notes below&#39;].index , inplace=True)
-    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;Ultralytics&#39;].index , inplace=True)
-    
-    ApplicantTable[i] = ApplicantTable[i].sort_values(by=[&#39;Offers&#39;, &#39;Attempts&#39;], ascending=False)
-    ApplicantTable[i]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTable[2015].head()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;div&gt;
-&lt;style scoped&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
-&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
-  &lt;thead&gt;
-    &lt;tr style=&#34;text-align: right;&#34;&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;Applicant&lt;/th&gt;
-      &lt;th&gt;Affiliation&lt;/th&gt;
-      &lt;th&gt;Attempts&lt;/th&gt;
-      &lt;th&gt;Offers&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;67&lt;/td&gt;
-      &lt;td&gt;Joshua Spitz&lt;/td&gt;
-      &lt;td&gt;MIT&lt;/td&gt;
-      &lt;td&gt;7&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;Alex Himmel&lt;/td&gt;
-      &lt;td&gt;Duke&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;77&lt;/td&gt;
-      &lt;td&gt;Laura Fields&lt;/td&gt;
-      &lt;td&gt;Northwestern&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;90&lt;/td&gt;
-      &lt;td&gt;Matt Wetstein&lt;/td&gt;
-      &lt;td&gt;UChicago&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;12&lt;/td&gt;
-      &lt;td&gt;Andrzej Szelc&lt;/td&gt;
-      &lt;td&gt;Yale&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Combining data of all the years. I define a success as getting at least one job offer, ie assign an applicant success = 1. With no offers at all, I define the (short-listed) candidate to be unsuccessful, ie assign the applicant success = 0.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYears = pd.concat(ApplicantTable, ignore_index=True)
-ApplicantTableAllYears = ApplicantTableAllYears.groupby([&#39;Applicant&#39;, &#39;Affiliation&#39;])[&#39;Attempts&#39;, &#39;Offers&#39;].sum().reset_index()
-ApplicantTableAllYears = ApplicantTableAllYears.sort_values(by=[&#39;Offers&#39;, &#39;Attempts&#39;], ascending=False)
-ApplicantTableAllYears[&#39;Success&#39;] = (ApplicantTableAllYears[&#39;Offers&#39;] &amp;gt; 0).astype(int)
-ApplicantTableAllYears
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;div&gt;
-&lt;style scoped&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
-&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
-  &lt;thead&gt;
-    &lt;tr style=&#34;text-align: right;&#34;&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;Applicant&lt;/th&gt;
-      &lt;th&gt;Affiliation&lt;/th&gt;
-      &lt;th&gt;Attempts&lt;/th&gt;
-      &lt;th&gt;Offers&lt;/th&gt;
-      &lt;th&gt;Success&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;219&lt;/td&gt;
-      &lt;td&gt;Florencia Canelli&lt;/td&gt;
-      &lt;td&gt;FNAL&lt;/td&gt;
-      &lt;td&gt;15&lt;/td&gt;
-      &lt;td&gt;7&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;570&lt;/td&gt;
-      &lt;td&gt;Sabine Lammers&lt;/td&gt;
-      &lt;td&gt;Columbia&lt;/td&gt;
-      &lt;td&gt;7&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;85&lt;/td&gt;
-      &lt;td&gt;Ben Kilminster&lt;/td&gt;
-      &lt;td&gt;Ohio State&lt;/td&gt;
-      &lt;td&gt;8&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;114&lt;/td&gt;
-      &lt;td&gt;Carter Hall&lt;/td&gt;
-      &lt;td&gt;SLAC&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;214&lt;/td&gt;
-      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
-      &lt;td&gt;Rochester&lt;/td&gt;
-      &lt;td&gt;9&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;678&lt;/td&gt;
-      &lt;td&gt;Yoshikazu Nagai&lt;/td&gt;
-      &lt;td&gt;UC Boulder&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;683&lt;/td&gt;
-      &lt;td&gt;Yusuke Koshio&lt;/td&gt;
-      &lt;td&gt;University of Tokyo&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;685&lt;/td&gt;
-      &lt;td&gt;Zarko Pavlovic&lt;/td&gt;
-      &lt;td&gt;LANL&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;687&lt;/td&gt;
-      &lt;td&gt;Zeynep Demeragli&lt;/td&gt;
-      &lt;td&gt;MIT&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;689&lt;/td&gt;
-      &lt;td&gt;Zhengyun You&lt;/td&gt;
-      &lt;td&gt;UC Irvine&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;693 rows × 5 columns&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&#34;how-to-rank-university-lab-employing-postdocs-in-terms-of-their-postdocs-success&#34;&gt;How to rank University/lab (employing postdocs) in terms of their postdocs success?&lt;/h3&gt;
-
-&lt;p&gt;To assess the average quality of postdocs in an organization (affiliation), I add a Offers/candidate metric. Total offers also give an estimate of the success of the affiliation. I use these two university metrics to rank the universities/labs to produce successful candidates affiliated to them (first priority given to Total Offers, and then to Offers/candidate).&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniversityTableAllYears = ApplicantTableAllYears.drop(columns=[&#39;Applicant&#39;, &#39;Attempts&#39;])
-UniversityTableAllYears[&#39;Failure&#39;] = (UniversityTableAllYears[&#39;Offers&#39;] == 0).astype(int)
-UniversityTableAllYears = UniversityTableAllYears.groupby([&#39;Affiliation&#39;])[&#39;Offers&#39;, &#39;Success&#39;, &#39;Failure&#39;].sum().reset_index()
-UniversityTableAllYears[&#39;Offers/candidate&#39;] = UniversityTableAllYears[&#39;Offers&#39;]*1./(UniversityTableAllYears[&#39;Success&#39;] + UniversityTableAllYears[&#39;Failure&#39;])
-UniversityTableAllYears.columns = [&#39;Affiliation&#39;, &#39;Total Offers&#39;, &#39;Total successful candidates&#39;, &#39;Total unsuccessful candidates&#39;, &#39;Offers/candidate&#39;]
-UniversityTableAllYears = UniversityTableAllYears.sort_values(by=[&#39;Total successful candidates&#39;, &#39;Offers/candidate&#39;], ascending=False)
-UniversityTableAllYears[&#39;Rank&#39;] = np.arange(1,150)
-UniversityTableAllYears
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;div&gt;
-&lt;style scoped&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
-&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
-  &lt;thead&gt;
-    &lt;tr style=&#34;text-align: right;&#34;&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;Affiliation&lt;/th&gt;
-      &lt;th&gt;Total Offers&lt;/th&gt;
-      &lt;th&gt;Total successful candidates&lt;/th&gt;
-      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
-      &lt;th&gt;Offers/candidate&lt;/th&gt;
-      &lt;th&gt;Rank&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;32&lt;/td&gt;
-      &lt;td&gt;FNAL&lt;/td&gt;
-      &lt;td&gt;58&lt;/td&gt;
-      &lt;td&gt;39&lt;/td&gt;
-      &lt;td&gt;26&lt;/td&gt;
-      &lt;td&gt;0.892308&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;56&lt;/td&gt;
-      &lt;td&gt;LBNL&lt;/td&gt;
-      &lt;td&gt;23&lt;/td&gt;
-      &lt;td&gt;20&lt;/td&gt;
-      &lt;td&gt;12&lt;/td&gt;
-      &lt;td&gt;0.718750&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;120&lt;/td&gt;
-      &lt;td&gt;UChicago&lt;/td&gt;
-      &lt;td&gt;25&lt;/td&gt;
-      &lt;td&gt;17&lt;/td&gt;
-      &lt;td&gt;10&lt;/td&gt;
-      &lt;td&gt;0.925926&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;15&lt;/td&gt;
-      &lt;td&gt;CERN&lt;/td&gt;
-      &lt;td&gt;16&lt;/td&gt;
-      &lt;td&gt;15&lt;/td&gt;
-      &lt;td&gt;29&lt;/td&gt;
-      &lt;td&gt;0.363636&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;24&lt;/td&gt;
-      &lt;td&gt;Columbia&lt;/td&gt;
-      &lt;td&gt;19&lt;/td&gt;
-      &lt;td&gt;12&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;1.266667&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;138&lt;/td&gt;
-      &lt;td&gt;University of Sussex&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0.000000&lt;/td&gt;
-      &lt;td&gt;145&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;139&lt;/td&gt;
-      &lt;td&gt;University of Tokyo&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0.000000&lt;/td&gt;
-      &lt;td&gt;146&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;140&lt;/td&gt;
-      &lt;td&gt;University of Victoria&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;0.000000&lt;/td&gt;
-      &lt;td&gt;147&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;145&lt;/td&gt;
-      &lt;td&gt;Western Illinois&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0.000000&lt;/td&gt;
-      &lt;td&gt;148&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;146&lt;/td&gt;
-      &lt;td&gt;William and Mary&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0.000000&lt;/td&gt;
-      &lt;td&gt;149&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;149 rows × 6 columns&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Candidates with at least one offer are counted as successful, while ones with no offer are counted as unsuccessful candidates.&lt;/p&gt;
-
-&lt;h2 id=&#34;data-visualization&#34;&gt;Data visualization&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.style.use(&#39;ggplot&#39;)
-x_pos = [i for i, _ in enumerate(UniversityTableAllYears[&#39;Affiliation&#39;].iloc[:5])]
-
-plt.bar(x_pos, UniversityTableAllYears[&#39;Total successful candidates&#39;].iloc[:5], color=&#39;green&#39;)
-plt.xlabel(&amp;quot;Postdoc affiliation&amp;quot;)
-plt.ylabel(&amp;quot;Total successful candidates&amp;quot;)
-plt.title(&amp;quot;Best 5 postdoc affiliations which produced largest number of successful candidates (from 2005-2019)&amp;quot;)
-
-plt.xticks(x_pos, UniversityTableAllYears[&#39;Affiliation&#39;].iloc[:5])
-
-plt.show()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_22_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniversityTableAllYearsBestOfferRate = UniversityTableAllYears.sort_values(by=[&#39;Offers/candidate&#39;], ascending=False)
-
-plt.style.use(&#39;ggplot&#39;)
-x_pos = [i for i, _ in enumerate(UniversityTableAllYearsBestOfferRate[&#39;Affiliation&#39;].iloc[:5])]
-
-plt.bar(x_pos, UniversityTableAllYearsBestOfferRate[&#39;Offers/candidate&#39;].iloc[:5], color=&#39;green&#39;)
-plt.xlabel(&amp;quot;Postdoc affiliation&amp;quot;)
-plt.ylabel(&amp;quot;Avg. offer per candidate&amp;quot;)
-plt.title(&amp;quot;Best 5 postdoc affiliations which have highest offers per candidate (from 2005-2019)&amp;quot;)
-
-plt.xticks(x_pos, UniversityTableAllYearsBestOfferRate[&#39;Affiliation&#39;].iloc[:5])
-
-plt.show()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_23_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;success-of-postdocs-w-r-t-their-affiliation-s-university-lab-s-metrics&#34;&gt;Success of postdocs w.r.t their affiliation&amp;rsquo;s (university/lab&amp;rsquo;s) metrics&lt;/h2&gt;
-
-&lt;p&gt;In addition to the binary metric of at least one offer as success, I add another candidate metric - Success odds. Success odds = (total offers)/(total attempts - total offers) for a candidate. The correlation between candidate metrics and university/lab (affiliation) metrics is of interest, as it gives an intuition about the spead of department&amp;rsquo;s success metrics over its postdocs. Are there some good/bad postdocs who skew their affiliation&amp;rsquo;s (university&amp;rsquo;s) success metric or are all the postdocs in general doing similarly from that university in academic job hunting.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked = ApplicantTableAllYears.merge(UniversityTableAllYears[[&#39;Affiliation&#39;, &#39;Rank&#39;, &#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;, &#39;Total unsuccessful candidates&#39;]], how=&#39;left&#39;, left_on=&#39;Affiliation&#39;, right_on=&#39;Affiliation&#39;)
-ApplicantTableAllYearRanked.rename(columns={&#39;Rank&#39;:&#39;Affiliation rank&#39;}, inplace=True)
-ApplicantTableAllYearRanked[&#39;Success odds&#39;] = ApplicantTableAllYearRanked[&#39;Offers&#39;]/(ApplicantTableAllYearRanked[&#39;Attempts&#39;] - ApplicantTableAllYearRanked[&#39;Offers&#39;])
-ApplicantTableAllYearRanked
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;div&gt;
-&lt;style scoped&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
-&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
-  &lt;thead&gt;
-    &lt;tr style=&#34;text-align: right;&#34;&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;Applicant&lt;/th&gt;
-      &lt;th&gt;Affiliation&lt;/th&gt;
-      &lt;th&gt;Attempts&lt;/th&gt;
-      &lt;th&gt;Offers&lt;/th&gt;
-      &lt;th&gt;Success&lt;/th&gt;
-      &lt;th&gt;Affiliation rank&lt;/th&gt;
-      &lt;th&gt;Offers/candidate&lt;/th&gt;
-      &lt;th&gt;Total successful candidates&lt;/th&gt;
-      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
-      &lt;th&gt;Success odds&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;Florencia Canelli&lt;/td&gt;
-      &lt;td&gt;FNAL&lt;/td&gt;
-      &lt;td&gt;15&lt;/td&gt;
-      &lt;td&gt;7&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0.892308&lt;/td&gt;
-      &lt;td&gt;39&lt;/td&gt;
-      &lt;td&gt;26&lt;/td&gt;
-      &lt;td&gt;0.875&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;Sabine Lammers&lt;/td&gt;
-      &lt;td&gt;Columbia&lt;/td&gt;
-      &lt;td&gt;7&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;1.266667&lt;/td&gt;
-      &lt;td&gt;12&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;2.500&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;Ben Kilminster&lt;/td&gt;
-      &lt;td&gt;Ohio State&lt;/td&gt;
-      &lt;td&gt;8&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;19&lt;/td&gt;
-      &lt;td&gt;0.900000&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;6&lt;/td&gt;
-      &lt;td&gt;1.000&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;Carter Hall&lt;/td&gt;
-      &lt;td&gt;SLAC&lt;/td&gt;
-      &lt;td&gt;5&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;7&lt;/td&gt;
-      &lt;td&gt;0.888889&lt;/td&gt;
-      &lt;td&gt;9&lt;/td&gt;
-      &lt;td&gt;9&lt;/td&gt;
-      &lt;td&gt;4.000&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
-      &lt;td&gt;Rochester&lt;/td&gt;
-      &lt;td&gt;9&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;20&lt;/td&gt;
-      &lt;td&gt;0.857143&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;0.500&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-      &lt;td&gt;...&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;688&lt;/td&gt;
-      &lt;td&gt;Yoshikazu Nagai&lt;/td&gt;
-      &lt;td&gt;UC Boulder&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;34&lt;/td&gt;
-      &lt;td&gt;0.500000&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;3&lt;/td&gt;
-      &lt;td&gt;0.000&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;689&lt;/td&gt;
-      &lt;td&gt;Yusuke Koshio&lt;/td&gt;
-      &lt;td&gt;University of Tokyo&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;146&lt;/td&gt;
-      &lt;td&gt;0.000000&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0.000&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;690&lt;/td&gt;
-      &lt;td&gt;Zarko Pavlovic&lt;/td&gt;
-      &lt;td&gt;LANL&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;22&lt;/td&gt;
-      &lt;td&gt;0.666667&lt;/td&gt;
-      &lt;td&gt;4&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;0.000&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;691&lt;/td&gt;
-      &lt;td&gt;Zeynep Demeragli&lt;/td&gt;
-      &lt;td&gt;MIT&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;6&lt;/td&gt;
-      &lt;td&gt;0.608696&lt;/td&gt;
-      &lt;td&gt;12&lt;/td&gt;
-      &lt;td&gt;11&lt;/td&gt;
-      &lt;td&gt;0.000&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;692&lt;/td&gt;
-      &lt;td&gt;Zhengyun You&lt;/td&gt;
-      &lt;td&gt;UC Irvine&lt;/td&gt;
-      &lt;td&gt;1&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;139&lt;/td&gt;
-      &lt;td&gt;0.000000&lt;/td&gt;
-      &lt;td&gt;0&lt;/td&gt;
-      &lt;td&gt;2&lt;/td&gt;
-      &lt;td&gt;0.000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;693 rows × 10 columns&lt;/p&gt;
-&lt;/div&gt;
-
-&lt;h2 id=&#34;success-odds-vs-affiliation-metric&#34;&gt;Success odds vs. Affiliation metric&lt;/h2&gt;
-
-&lt;p&gt;Pearson correlation:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;correlation = ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39; ,&#39;Total successful candidates&#39;, &#39;Affiliation rank&#39;, &#39;Success odds&#39;]]
-correlation.corr()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;div&gt;
-&lt;style scoped&gt;
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-&lt;/style&gt;
-&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
-  &lt;thead&gt;
-    &lt;tr style=&#34;text-align: right;&#34;&gt;
-      &lt;th&gt;&lt;/th&gt;
-      &lt;th&gt;Offers/candidate&lt;/th&gt;
-      &lt;th&gt;Total successful candidates&lt;/th&gt;
-      &lt;th&gt;Affiliation rank&lt;/th&gt;
-      &lt;th&gt;Success odds&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Offers/candidate&lt;/td&gt;
-      &lt;td&gt;1.000000&lt;/td&gt;
-      &lt;td&gt;0.414271&lt;/td&gt;
-      &lt;td&gt;-0.686715&lt;/td&gt;
-      &lt;td&gt;0.341810&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Total successful candidates&lt;/td&gt;
-      &lt;td&gt;0.414271&lt;/td&gt;
-      &lt;td&gt;1.000000&lt;/td&gt;
-      &lt;td&gt;-0.588940&lt;/td&gt;
-      &lt;td&gt;0.159448&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Affiliation rank&lt;/td&gt;
-      &lt;td&gt;-0.686715&lt;/td&gt;
-      &lt;td&gt;-0.588940&lt;/td&gt;
-      &lt;td&gt;1.000000&lt;/td&gt;
-      &lt;td&gt;-0.235494&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Success odds&lt;/td&gt;
-      &lt;td&gt;0.341810&lt;/td&gt;
-      &lt;td&gt;0.159448&lt;/td&gt;
-      &lt;td&gt;-0.235494&lt;/td&gt;
-      &lt;td&gt;1.000000&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Offer/candidate has a higher correlation with success odds.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#Support Vector Regression
-from sklearn.svm import SVR, LinearSVR
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Y = np.array(ApplicantTableAllYearRanked[&#39;Success odds&#39;].astype(float))
-Y = np.nan_to_num(Y)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.scatter(ApplicantTableAllYearRanked[&#39;Affiliation rank&#39;], ApplicantTableAllYearRanked[&#39;Success odds&#39;], alpha=0.5, color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
-plt.xlabel(&#39;Affiliation rank&#39;)
-plt.ylabel(&#39;Success odds&#39;)
-plt.xlim([-0.01,160])
-plt.ylim([-0.01,4.5])
-plt.legend()
-plt.show()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_33_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.scatter(ApplicantTableAllYearRanked[&#39;Total successful candidates&#39;], ApplicantTableAllYearRanked[&#39;Success odds&#39;], alpha=0.5, color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
-plt.xlabel(&#39;Total successful candidates&#39;)
-plt.ylabel(&#39;Success odds&#39;)
-plt.xlim([-1,40])
-plt.ylim([-0.1,4.5])
-plt.legend()
-plt.show()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_34_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.scatter(ApplicantTableAllYearRanked[&#39;Offers/candidate&#39;], ApplicantTableAllYearRanked[&#39;Success odds&#39;], alpha=0.5, color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
-plt.xlabel(&#39;Offers/candidate&#39;)
-plt.ylabel(&#39;Success odds&#39;)
-plt.xlim([-0.1,1.4])
-plt.ylim([-0.1,4.5])
-
-X = np.array(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;]].astype(float))
-X = np.nan_to_num(X)
-
-Z = np.array(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;]].astype(float))
-
-
-svr_linOfferDensity = LinearSVR(random_state=0, tol=1e-5)
-#svr_rbf = SVR(kernel=&#39;rbf&#39;, C=1e3, gamma=0.1)
-
-Y_svrlinOfferDensity = svr_linOfferDensity.fit(X, Y).predict(X)
-#Y_rbf = svr_rbf.fit(Z, Y).predict(Z)
-
-plt.plot(X, Y_svrlinOfferDensity, color=&#39;green&#39;, lw=1, label=&#39;Linear fit (only Offers/candidate)&#39;)
-#plt.plot(X, Y_rbf, color=&#39;black&#39;, lw=1, label=&#39;rbf model&#39;)
-plt.legend()
-plt.show()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/numpy/core/fromnumeric.py:90: RuntimeWarning: overflow encountered in reduce
-  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_35_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;success-vs-affiliation-metric&#34;&gt;Success vs. Affiliation metric&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked.plot(x=&#39;Affiliation rank&#39;, y=&#39;Success&#39;, style=&#39;.&#39;, alpha = 0.2)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76e2cc470&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_37_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked.plot(x=&#39;Total successful candidates&#39;, y=&#39;Success&#39;, style=&#39;o&#39;, alpha = 0.1)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76b992fd0&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_38_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;t = ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;, &#39;Success&#39;]]
-t = t.sort_values(by=[&#39;Total successful candidates&#39;], ascending=False)
-tsuccess = t[t[&#39;Success&#39;] == 1]
-tfailure = t[t[&#39;Success&#39;] == 0]
-
-bins=3
-plt.hist(tsuccess[&#39;Total successful candidates&#39;], bins, alpha=0.3, label=&#39;Success&#39;)
-plt.hist(tfailure[&#39;Total successful candidates&#39;], bins, alpha=0.3, label=&#39;Failure&#39;)
-
-plt.xlabel(&#39;Total successful candidates&#39;)
-plt.ylabel(&#39;frequency&#39;)
-plt.legend(loc=&#39;best&#39;)
-plt.show()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_39_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked.plot(x=&#39;Offers/candidate&#39;, y=&#39;Success&#39;, style=&#39;.&#39;, alpha = 0.2)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76b9c8438&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_40_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;t = ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;, &#39;Success&#39;]]
-t = t.sort_values(by=[&#39;Offers/candidate&#39;], ascending=False)
-tsuccess = t[t[&#39;Success&#39;] == 1]
-tfailure = t[t[&#39;Success&#39;] == 0]
-
-bins=3
-plt.hist(tsuccess[&#39;Offers/candidate&#39;], bins, alpha=0.3, label=&#39;Success&#39;)
-plt.hist(tfailure[&#39;Offers/candidate&#39;], bins, alpha=0.3, label=&#39;Failure&#39;)
-
-plt.xlabel(&#39;Offers/candidate&#39;)
-plt.ylabel(&#39;frequency&#39;)
-plt.legend(loc=&#39;best&#39;)
-plt.show()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_41_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Offer/candidate has a fair discriminating power between success and failure cases.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
-logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-
-
-
-
-
-0.5844155844155844
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
-logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;, &#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Affiliation rank&#39;, &#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-
-
-
-
-
-0.6536796536796536
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
-logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-
-
-
-
-
-0.5526695526695526
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
-logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;, &#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Total successful candidates&#39;, &#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-
-
-
-
-
-0.6551226551226551
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = LogisticRegression()
-logisticRegr.fit(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-logisticRegr.score(ApplicantTableAllYearRanked[[&#39;Offers/candidate&#39;]], ApplicantTableAllYearRanked[&#39;Success&#39;])
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/sklearn/linear_model/logistic.py:432: FutureWarning: Default solver will be changed to &#39;lbfgs&#39; in 0.22. Specify a solver to silence this warning.
-  FutureWarning)
-
-
-
-
-
-0.6551226551226551
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;lsquo;Total successful candidates&amp;rsquo; metric does not provide any additional discriminating power than &amp;lsquo;Offers/candidate&amp;rsquo; metric.&lt;/p&gt;
-
-&lt;p&gt;To get an intuition of why &amp;lsquo;Offers/candidate&amp;rsquo; metric is a good indicator of postdoc success, let&amp;rsquo;s look at the actual distribution of number of offer of a hep-ex postdoc:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYearRanked[&#39;Offers&#39;].hist(bins=10)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7fd76b86f2b0&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_49_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Since most postdocs in hep-ex typically do not receive more than 1 offer, &amp;lsquo;Offers/candidate&amp;rsquo; (ie the avg. number of offers by a postdoc from a given afiliation (university/lab), actually represents the number of successful postdocs of that affiliation.&lt;/p&gt;
-
-&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Hence, &amp;lsquo;Offers/candidate&amp;rsquo; is the best metric to indicate if a university/lab produces successful postdocs.&lt;/li&gt;
-&lt;li&gt;According to &amp;lsquo;Offers/candidate&amp;rsquo; metric Columbia University is the best university to do a hep-ex postdoc.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;next-steps&#34;&gt;Next steps&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;temporal variations in hep-ex job market not taken into account&lt;/li&gt;
-&lt;li&gt;US and non-US jobs to be treated separately&lt;/li&gt;
-&lt;li&gt;should separate the study into energy, intensity and cosmic frontiers, as the job trends and funding are different for each&lt;/li&gt;
-&lt;li&gt;think of other metrics&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
     
     <item>
       <title>Detect Language of Transliterated Texts</title>
@@ -1915,6 +776,1400 @@ PredictLanguage(inputtext)
 &lt;li&gt;&lt;p&gt;Think of a better way to reduce even further English words that are contaminating the corpuses&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;h2 id=&#34;add-other-non-roman-langauges&#34;&gt;Add other non-roman langauges&lt;/h2&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>HEP-ex Postdoc Success</title>
+      <link>https://sen-sourav.github.io/project/postdocsuccess/</link>
+      <pubDate>Tue, 08 Oct 2019 01:22:11 -0400</pubDate>
+      <guid>https://sen-sourav.github.io/project/postdocsuccess/</guid>
+      <description>
+
+&lt;hr /&gt;
+
+&lt;h1 id=&#34;is-hep-ex-postdoc-s-affiliation-an-indicator-of-success&#34;&gt;Is hep-ex postdoc&amp;rsquo;s affiliation an indicator of success?&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;%%HTML
+&amp;lt;style type=&amp;quot;text/css&amp;quot;&amp;gt;
+table.dataframe td, table.dataframe th {
+    border: 1px  black solid !important;
+  color: black !important;
+}
+&amp;lt;/style&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;style type=&#34;text/css&#34;&gt;
+table.dataframe td, table.dataframe th {
+    border: 1px  black solid !important;
+  color: black !important;
+}
+&lt;/style&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://phdcomics.com/comics/archive/phd082313s.gif&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;As an experimental High Energy Physics (hep-ex) grad student, I often wonder which university/national lab should I choose for doing a postdoc to increase my odds of getting a faculty position, if I plan to stay in academia. But unlike other sub-fields in Physics, we have huge world-wide collaborations for hep-ex experiments like the Large Hadron Collider. In such collaborative environment, it is not very clear if it really matters where one does his/her postdoc, in terms of finding an academic faculty (research scientist) position. It might not be hard to convince oneself that there is actually no such correlation between a postdoc&amp;rsquo;s affiliation and possibility of finding an academic job (faculty position) eventually. This has prompted me to put this hypothesis to test. So, let&amp;rsquo;s explore here whether such a correlation between a postdoc&amp;rsquo;s affiliation and future success in finding an academic faculty position in hep-ex exists.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import re
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from sklearn.linear_model import LinearRegression
+import statsmodels.api as sm
+from sklearn import linear_model
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;data-collection&#34;&gt;Data collection&lt;/h2&gt;
+
+&lt;p&gt;hepexrumor (&lt;a href=&#34;https://sites.google.com/site/hepexrumor/&#34; target=&#34;_blank&#34;&gt;https://sites.google.com/site/hepexrumor/&lt;/a&gt;) is a popular unofficial site which has latest rumors about the hep-ex jobs (in the US and ouside). I parse this website for getting the job rumors from 2005-2019. For this short study, I did not consider temporal variation in job patterns and combined the data of all the years.&lt;/p&gt;
+
+&lt;p&gt;I use the latest affiliation of a postdoc while applying for job. I only consider the postdocs who cleared the short-list round for a job as the total candidate pool, with a presumptuous assumption that postdocs not clearing the shortlist were not serious candidates for the job.&lt;/p&gt;
+
+&lt;p&gt;Parsing hepexrumor:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;hepexjobsite = &#39;https://sites.google.com/site/hepexrumor/&#39;
+year = {2005: &#39;2005-rumor&#39;  ,
+        2006: &#39;2006-rumor&#39;  ,
+        2007: &#39;2007-rumor&#39;  ,
+        2008: &#39;2008-rumor&#39;  ,
+        2009: &#39;2009-rumor-1&#39;,
+        2010: &#39;2009-rumor&#39;  ,
+        2011: &#39;2011-rumors&#39; ,
+        2012: &#39;2012-rumors&#39; ,
+        2013: &#39;2013-rumors&#39; ,
+        2014: &#39;2014-rumors&#39; ,
+        2015: &#39;2015-rumors&#39; ,
+        2016: &#39;2016-rumors&#39; ,
+        2017: &#39;2016-2017&#39;   ,
+        2018: &#39;2018-rumors&#39; ,
+        2019: &#39;2019-rumors&#39; }
+df = {}
+for i in range(2005,2020):
+    p = pd.read_html(hepexjobsite+year[i])
+    print(i, len(p))
+    if (i &amp;lt; 2016 ):
+        tUS = p[3].iloc[1:]
+        tUS.columns = p[3].iloc[0]
+    else:
+        tnonUS = p[4].iloc[1:]
+        tnonUS.columns = p[4].iloc[0]
+        tnonUS = tnonUS.drop(columns=[&#39;Field&#39;])
+        tUS = p[5].iloc[1:]
+        tUS.columns = p[5].iloc[0]
+        tUS = tUS.drop(columns=[&#39;Field&#39;])
+        tUS.append(tnonUS, ignore_index=True)
+    tUS.columns = [&amp;quot;Institution&amp;quot;, &amp;quot;Short List&amp;quot;, &amp;quot;Offers&amp;quot;]
+    df[i] = tUS
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;2005 4
+2006 4
+2007 4
+2008 4
+2009 4
+2010 4
+2011 4
+2012 4
+2013 4
+2014 4
+2015 4
+2016 6
+2017 6
+2018 6
+2019 6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;df[2017].head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Institution&lt;/th&gt;
+      &lt;th&gt;Short List&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;Nebraska&lt;/td&gt;
+      &lt;td&gt;Jamie Antonelli (Ohio State) [CMS] Clemens Lan...&lt;/td&gt;
+      &lt;td&gt;Frank Golf (accepted)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;Wilson Fellowship&lt;/td&gt;
+      &lt;td&gt;Joseph Zennamo (Chicago) [MicroBooNE, SBND] Mi...&lt;/td&gt;
+      &lt;td&gt;Minerba Betancourt (accepted) Nhan Tran (accep...&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;Alabama&lt;/td&gt;
+      &lt;td&gt;Carl Pfendner (Ohio State) [ARA, EVA]&lt;/td&gt;
+      &lt;td&gt;NaN&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;Cornell (accelerators)&lt;/td&gt;
+      &lt;td&gt;NaN&lt;/td&gt;
+      &lt;td&gt;NaN&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;Brookhaven&lt;/td&gt;
+      &lt;td&gt;John Alison (Chicago) [ATLAS] Viviana Cavalier...&lt;/td&gt;
+      &lt;td&gt;Viviana Cavaliere (accepted)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;data-cleaning&#34;&gt;Data cleaning&lt;/h2&gt;
+
+&lt;p&gt;There is ambiguity associated to the names of some of the universities and labs, like Fermilab is listed as &amp;lsquo;Fermilab&amp;rsquo; in some places and &amp;lsquo;FNAL&amp;rsquo; elsewhere. The function below removes this ambiguity by replacing the ambiguous names to a standard name for the organizations:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def UniNameAmbiguityFix(dfk): 
+    Uni_name_ambiguity = {&#39;Argonne&#39;: &#39;ANL&#39;,
+                          &#39;Boston University&#39;: &#39;Boston U&#39;,
+                          &#39;BU&#39;: &#39;Boston U&#39;,
+                          &#39;Brown University&#39;: &#39;Brown&#39;,
+                          &#39;Cal Tech&#39;: &#39;Caltech&#39;,
+                          &#39;Carnegie&#39;: &#39;Carnegie Mellon&#39;,
+                          &#39;Colorado State University&#39;: &#39;Colorado State&#39;,
+                          &#39;Fermilab&#39;: &#39;FNAL&#39;,
+                          &#39;FNAL/Chicago&#39;: &#39;FNAL&#39;,
+                          &#39;Industry/Fermilab&#39;: &#39;FNAL&#39;,
+                          &#39;Chicago/FNAL&#39;: &#39;FNAL&#39;,
+                          &#39;Göttingen&#39;: &#39;Gottingen&#39;,
+                          &#39;Imperial&#39;: &#39;Imperial College London&#39;,
+                          &#39;Indiana&#39;: &#39;Indiana University&#39;, 
+                          &#39;KSU&#39;: &#39;Kansas State&#39;,
+                          &#39;Los Alamos&#39;: &#39;LANL&#39;,
+                          &#39;LBL&#39;: &#39;LBNL&#39;,
+                          &#39;MSU&#39;: &#39;Michigan State&#39;, 
+                          &#39;Northeastern University&#39;: &#39;Northeastern&#39;,
+                          &#39;Northwestern University&#39;: &#39;Northwestern&#39;,
+                          &#39;OSU&#39;: &#39;Ohio State&#39;,
+                          &#39;SUNY Stony Brook&#39;: &#39;Stony Brook&#39;,
+                          &#39;Texas A&amp;amp;M&#39;: &#39;TAMU&#39;,
+                          &#39;Triumf&#39;: &#39;TRIUMF&#39;,
+                          &#39;U Chicago&#39;: &#39;UChicago&#39;,
+                          &#39;Chicago&#39;: &#39;UChicago&#39;,
+                          &#39;University of Chicago&#39;: &#39;UChicago&#39;,
+                          &#39;Berkeley&#39;: &#39;UC Berkeley&#39;,
+                          &#39;University of Colorado Boulder&#39;: &#39;UC Boulder&#39;,
+                          &#39;CU Boulder&#39;: &#39;UC Boulder&#39;,
+                          &#39;Colorado&#39;: &#39;UC Boulder&#39;,
+                          &#39;Davis&#39;: &#39;UC Davis&#39;,
+                          &#39;Irvine&#39;: &#39;UC Irvine&#39;,
+                          &#39;UCSD&#39;: &#39;UC San Diego&#39;,
+                          &#39;UCSB&#39;: &#39;UC Santa Barbara&#39;,
+                          &#39;UCSC&#39;: &#39;UC Santa Cruz&#39;,
+                          &#39;UIC&#39;: &#39;University of Illinois Chicago&#39;,
+                          &#39;University of Illinois Urbana-Champaign&#39;: &#39;UIUC&#39;,
+                          &#39;University of North Carolina&#39;: &#39;UNC&#39;,
+                          &#39;University of Pennsylvania&#39;: &#39;UPenn&#39;,
+                          &#39;University of Texas Austin&#39;: &#39;UT Austin&#39;, 
+                          &#39;Florida&#39;: &#39;University of Florida&#39;,
+                          &#39;Geneva&#39;: &#39;University of Geneva&#39;,
+                          &#39;Hawaii&#39;: &#39;University of Hawaii&#39;,
+                          &#39;Maryland&#39;: &#39;University of Maryland&#39;, 
+                          &#39;Michigan&#39;: &#39;University of Michigan&#39;,
+                          &#39;Minnesota&#39;: &#39;University of Minnesota&#39;,
+                          &#39;Sheffield&#39;: &#39;University of Sheffield&#39;,
+                          &#39;Victoria&#39;: &#39;University of Victoria&#39;,
+                          &#39;Virginia&#39;: &#39;University of Virginia&#39;,
+                          &#39;Washington&#39;: &#39;University of Washington&#39;,
+                          &#39;University of Wisconsin Madison&#39;: &#39;UW Madison&#39;,
+                          &#39;Wisconsin&#39;: &#39;UW Madison&#39;,
+                          &#39;UW&#39;: &#39;UW Madison&#39;,
+                          &#39;UW-Madison&#39;: &#39;UW Madison&#39;}
+    Uni_name_ambiguity.keys()
+    dfk = dfk.replace({&#39;Affiliation&#39;: Uni_name_ambiguity})
+    dfk = dfk.groupby([&#39;Applicant&#39;, &#39;Affiliation&#39;])[&#39;Attempts&#39;].sum().reset_index()
+    return dfk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;extracting-data-about-job-interviews-performances-of-postdocs&#34;&gt;Extracting data about job interviews performances of postdocs&lt;/h2&gt;
+
+&lt;p&gt;Extracting tables for applicant job performance (along with their latest affiliation at the time of job application) from tables for job results.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTable = {}
+for i in range(2005, 2020):
+    attempt = df[i][&#39;Short List&#39;].str.split(&amp;quot;\)&amp;quot;, expand=True)
+    attempt = attempt.unstack()
+    attempt = attempt.str.split(r&amp;quot;\[.*?\]&amp;quot;).str.join(&#39;&#39;)
+    attempt = attempt.str.strip()
+    attempt = attempt.value_counts()
+    attempt = attempt.to_frame()
+    attempt.reset_index(level=0, inplace=True)
+    attempt.columns = [&#39;Applicant&#39;, &#39;Attempts&#39;]
+    attemptTable = attempt[&#39;Applicant&#39;].str.split(&#39;(&#39;, expand=True)
+    attemptTable.columns = [&#39;Applicant&#39;, &#39;Affiliation&#39;]
+    attemptTable[&#39;Attempts&#39;] = attempt[&#39;Attempts&#39;]
+    attemptTable = attemptTable.iloc[1:]
+    indexDrop = attemptTable[attemptTable[&#39;Applicant&#39;].str.contains(&amp;quot;\)&amp;quot; or &amp;quot;\(&amp;quot; or &amp;quot;[&amp;quot; or &amp;quot;]&amp;quot;)].index
+    attemptTable.drop(indexDrop , inplace=True)
+    attemptTable.Affiliation.str.strip()
+    attemptTable = UniNameAmbiguityFix(attemptTable)
+
+    offerTable = df[i][&#39;Offers&#39;].str.split(r&amp;quot;\(.*?\)&amp;quot;, expand=True)
+    offerTable = offerTable.unstack()
+    offerTable = offerTable.str.strip()
+    offerTable = offerTable.value_counts()
+    offerTable = offerTable.to_frame()
+    offerTable.reset_index(level=0, inplace=True)
+    offerTable.columns = [&#39;Applicant&#39;, &#39;Offers&#39;]
+    offerTable[&#39;Applicant&#39;] = offerTable[&#39;Applicant&#39;].str.replace(u&#39;† \xa0&#39;, u&#39;&#39;)
+    offerTable = offerTable.iloc[1:]
+
+    attemptTable.Applicant = attemptTable.Applicant.str.strip()
+    offerTable.Applicant   = offerTable.Applicant.str.strip()
+
+    ApplicantTable[i] = attemptTable.merge(offerTable, how=&#39;left&#39;, left_on=&#39;Applicant&#39;, right_on=&#39;Applicant&#39;)
+    ApplicantTable[i] = ApplicantTable[i].fillna(0)
+    ApplicantTable[i].Offers = ApplicantTable[i].Offers.astype(int)
+    #applicants with no affiliations listed are dropped
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;].str.strip() == &amp;quot;&amp;quot;].index , inplace=True)
+    #blank applicant dropped
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.strip() == &amp;quot;&amp;quot;].index , inplace=True)
+    #theory or non-hep jobs to be dropped
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.lower().str.contains(&#39;theory&#39;)].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Applicant&#39;].str.lower().str.contains(&#39;hep&#39;)].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;IAS&#39;].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;theory&#39;].index , inplace=True)
+    #other misc. cleaning
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;notes below&#39;].index , inplace=True)
+    ApplicantTable[i].drop(ApplicantTable[i][ApplicantTable[i][&#39;Affiliation&#39;] == &#39;Ultralytics&#39;].index , inplace=True)
+    
+    ApplicantTable[i] = ApplicantTable[i].sort_values(by=[&#39;Offers&#39;, &#39;Attempts&#39;], ascending=False)
+    ApplicantTable[i]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTable[2015].head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;67&lt;/td&gt;
+      &lt;td&gt;Joshua Spitz&lt;/td&gt;
+      &lt;td&gt;MIT&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;Alex Himmel&lt;/td&gt;
+      &lt;td&gt;Duke&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;77&lt;/td&gt;
+      &lt;td&gt;Laura Fields&lt;/td&gt;
+      &lt;td&gt;Northwestern&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;90&lt;/td&gt;
+      &lt;td&gt;Matt Wetstein&lt;/td&gt;
+      &lt;td&gt;UChicago&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;Andrzej Szelc&lt;/td&gt;
+      &lt;td&gt;Yale&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Combining data of all the years.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYears = pd.concat(ApplicantTable, ignore_index=True)
+ApplicantTableAllYears = ApplicantTableAllYears.groupby([&#39;Applicant&#39;, &#39;Affiliation&#39;])[&#39;Attempts&#39;, &#39;Offers&#39;].sum().reset_index()
+ApplicantTableAllYears = ApplicantTableAllYears.sort_values(by=[&#39;Offers&#39;, &#39;Attempts&#39;], ascending=False)
+ApplicantTableAllYears.head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;220&lt;/td&gt;
+      &lt;td&gt;Florencia Canelli&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;571&lt;/td&gt;
+      &lt;td&gt;Sabine Lammers&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;86&lt;/td&gt;
+      &lt;td&gt;Ben Kilminster&lt;/td&gt;
+      &lt;td&gt;Ohio State&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;115&lt;/td&gt;
+      &lt;td&gt;Carter Hall&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;215&lt;/td&gt;
+      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
+      &lt;td&gt;Rochester&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I define a success as getting at least one job offer, ie assign an applicant success = 1. With no offers at all, I define the (short-listed) candidate to be unsuccessful, ie assign the applicant success = 0.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYears[&#39;Success&#39;] = (ApplicantTableAllYears[&#39;Offers&#39;] &amp;gt; 0).astype(int)
+ApplicantTableAllYears.head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+      &lt;th&gt;Success&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;220&lt;/td&gt;
+      &lt;td&gt;Florencia Canelli&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;571&lt;/td&gt;
+      &lt;td&gt;Sabine Lammers&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;86&lt;/td&gt;
+      &lt;td&gt;Ben Kilminster&lt;/td&gt;
+      &lt;td&gt;Ohio State&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;115&lt;/td&gt;
+      &lt;td&gt;Carter Hall&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;215&lt;/td&gt;
+      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
+      &lt;td&gt;Rochester&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;university-metric&#34;&gt;University Metric&lt;/h2&gt;
+
+&lt;p&gt;In order to understand if there is any role of a university/lab in the success of its postdoc in finding a permanent job in academia, we define a few metrics to quantify the track record of a university/lab in producing successful postdocs (postdocs who could find permanent jobs immediately after finishing their current postdoc at that university/lab).&lt;/p&gt;
+
+&lt;p&gt;For our positive hypothesis, we assume that every university/affiliation develops some qualities in its postdocs, which influences their employability in academia. Then the rate at which its postdocs get job offers every year (academic cycle) can be modelled by Poisson distribution:&lt;/p&gt;
+
+&lt;p&gt;$$ P(k\ job\ offers\ per\ year\ from\ university\ u) = \frac{\lambda_u^{k} e^{-\lambda_u}}{k!} $$&lt;/p&gt;
+
+&lt;p&gt;where the rate parameter $\lambda_u$ encoding those qualities which influence the overall employability of postdocs from university/lab $u$. Here k can theoretically range from 0, 1, 2, .., total no. of hepex job positions available globally for that year.
+Here, we made three assumptions:
+* Total number of jobs applied by all the postdocs from a university/lab in a year is very large.
+* All postdocs of a university/lab are of similar academic calibre when they start looking for permanent jobs, which the universities may ensure during their postdoc recruitment process and then through adequate research/academic training of their postdoctoral researchers throughout the term of their affiliation.
+* Success or failure of a postdoc in one job application does not affect the outcomes of other job application for that postdoc or other postdocs of that university in any way. (In reality, if one postdoc gets a job, that job becomes unavailable to other postdocs).&lt;/p&gt;
+
+&lt;p&gt;With these three assumptions, $\lambda_u$ becomes an indicator of the contribution of a university/lab in the overall success of its postdoctoral fellows.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Average no. of successful offers/year&lt;/strong&gt; is a metric for estimating the rate at which postdocs of a university can crack hepex job interviews, as it is an unbiased estimator of $\lambda_u$.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Average no. of successful offers/year&lt;/strong&gt;, however, does not take into account the no. of the postdoc fellows in a university/lab, but the size of a research group often inluences the skills of its members. The no. of postdocs a university hires varies from year to year based on various factors like - funding secured by the university/lab, no. of projects, no. of professors, etc.&lt;/p&gt;
+
+&lt;p&gt;Since we assume that each postdoc&amp;rsquo;s outcomes are independent of each other from the same university/lab, so model university&amp;rsquo;s role for each postdoc success as independent poisson process. This assumption makes the rate $\lambda_u$ as:&lt;/p&gt;
+
+&lt;p&gt;$\lambda_u$ = $\Sigma_{i_u = 0}^{N}$ $\lambda_{i_u}$ where N is the total no. of postdocs in a university/lab&lt;/p&gt;
+
+&lt;p&gt;Here, $i_u$ is the i-th postdoc of the university/lab u for a given year. Now, since we also assume all the postdocs of the same university/lab are at par in academic/research calibre when applying for permanent jobs, we assume the rates $\lambda_{u_i}$ for each candidate as identical to others. Therefore, $\lambda_{u_i} = \lambda^{indiv}_{u}$ (constant).&lt;/p&gt;
+
+&lt;p&gt;$\lambda_u = \Sigma_{i_u = 0}^{N}$ $\lambda_{i_u} = N\lambda^{indiv}_{u}$&lt;/p&gt;
+
+&lt;p&gt;Therefore, $\lambda^{indiv}_{u} = \frac{\lambda_u}{N}$&lt;/p&gt;
+
+&lt;p&gt;Although, N (no. of postdocs applying for jobs) varies every year based on many factors such as funding available to the university/lab, no. of projects the university/lab is working on, no. of principal investigators working at the time etc.&lt;/p&gt;
+
+&lt;p&gt;To average out these variations, we use the &lt;strong&gt;average no. of postdocs applying to jobs/year&lt;/strong&gt; from a university/lab as an estimator of N.&lt;/p&gt;
+
+&lt;p&gt;Now we can define the &lt;strong&gt;&lt;em&gt;university metric&lt;/em&gt;&lt;/strong&gt; (estimator of $\lambda^{indiv}_{u}$):&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Offers/candidate  = $\frac{Average\ no.\ of\ successful\ offers\ per\ year}{Average\ no.\ of\ postdocs\ applying\ to\ jobs\ per\ year} = \frac{Total\ no.\ of\ successful\ offers\ from\ 2005-19}{Total\ no.\ of\ postdocs\ applying\ to\ jobs\ from\ 2005-19}$&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniversityTableAllYears = ApplicantTableAllYears.drop(columns=[&#39;Applicant&#39;, &#39;Attempts&#39;])
+UniversityTableAllYears[&#39;Failure&#39;] = (UniversityTableAllYears[&#39;Offers&#39;] == 0).astype(int)
+UniversityTableAllYears = UniversityTableAllYears.groupby([&#39;Affiliation&#39;])[&#39;Offers&#39;, &#39;Success&#39;, &#39;Failure&#39;].sum().reset_index()
+UniversityTableAllYears[&#39;Offers/candidate&#39;] = UniversityTableAllYears[&#39;Offers&#39;]*1./(UniversityTableAllYears[&#39;Success&#39;] + UniversityTableAllYears[&#39;Failure&#39;])
+UniversityTableAllYears.columns = [&#39;Affiliation&#39;, &#39;Total Offers&#39;, &#39;Total successful candidates&#39;, &#39;Total unsuccessful candidates&#39;, &#39;Offers/candidate&#39;]
+UniversityTableAllYears = UniversityTableAllYears.sort_values(by=[&#39;Offers/candidate&#39;], ascending=False)
+UniversityTableAllYears.head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Total Offers&lt;/th&gt;
+      &lt;th&gt;Total successful candidates&lt;/th&gt;
+      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;24&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;19&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1.266667&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;99&lt;/td&gt;
+      &lt;td&gt;Stony Brook&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1.250000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;108&lt;/td&gt;
+      &lt;td&gt;Toronto&lt;/td&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1.200000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;124&lt;/td&gt;
+      &lt;td&gt;UPenn&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1.200000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;101&lt;/td&gt;
+      &lt;td&gt;Syracuse&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;1.000000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Candidates with at least one offer are counted as successful, while ones with no offer are counted as unsuccessful candidates.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.style.use(&#39;ggplot&#39;)
+u_total_success = UniversityTableAllYears.sort_values(by=[&#39;Total successful candidates&#39;], ascending=False)
+
+x_pos = [i for i, _ in enumerate(u_total_success[&#39;Affiliation&#39;].iloc[:5])]
+
+plt.bar(x_pos, u_total_success[&#39;Total successful candidates&#39;].iloc[:5], color=&#39;green&#39;)
+plt.xlabel(&amp;quot;Postdoc affiliation&amp;quot;)
+plt.ylabel(&amp;quot;Total successful candidates&amp;quot;)
+plt.title(&amp;quot;Universities/labs which produced largest number of successful candidates (from 2005-2019)&amp;quot;)
+
+plt.xticks(x_pos, u_total_success[&#39;Affiliation&#39;].iloc[:5])
+
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_32_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;FNAL (Fermilab) has a huge particle physics group especially during the tevatron days! :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.style.use(&#39;ggplot&#39;)
+x_pos = [i for i, _ in enumerate(UniversityTableAllYears[&#39;Affiliation&#39;].iloc[:5])]
+
+plt.bar(x_pos, UniversityTableAllYears[&#39;Offers/candidate&#39;].iloc[:5], color=&#39;green&#39;)
+plt.xlabel(&amp;quot;Postdoc affiliation&amp;quot;)
+plt.ylabel(&amp;quot;Avg. offer per candidate&amp;quot;)
+plt.title(&amp;quot;Universities/labs which have highest offers per candidate (from 2005-2019)&amp;quot;)
+
+plt.xticks(x_pos, UniversityTableAllYears[&#39;Affiliation&#39;].iloc[:5])
+
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_34_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;def checkmodeling(uniname):
+    uni_offers = []
+    UniversityTable = {}
+    for i in range(2005,2020):
+        UniversityTable[i] = ApplicantTable[i].sort_values(by=[&#39;Offers&#39;, &#39;Attempts&#39;], ascending=False)
+        UniversityTable[i] = UniversityTable[i].groupby([&#39;Applicant&#39;, &#39;Affiliation&#39;])[&#39;Attempts&#39;, &#39;Offers&#39;].sum().reset_index()
+        UniversityTable[i][&#39;Success&#39;] = (UniversityTable[i][&#39;Offers&#39;] &amp;gt; 0).astype(int)
+        UniversityTable[i] = UniversityTable[i].drop(columns=[&#39;Applicant&#39;, &#39;Attempts&#39;])
+        UniversityTable[i][&#39;Failure&#39;] = (UniversityTable[i][&#39;Offers&#39;] == 0).astype(int)
+        UniversityTable[i] = UniversityTable[i].groupby([&#39;Affiliation&#39;])[&#39;Offers&#39;, &#39;Success&#39;, &#39;Failure&#39;].sum().reset_index()
+        d = UniversityTable[i]
+        o = d[d[&#39;Affiliation&#39;] == uniname][&#39;Offers&#39;]
+        if (len(o.values)!=0): uni_offers.append(int(o))
+
+    uni_offers = np.array(uni_offers)
+
+
+    def factorial (n):
+        if (n &amp;gt; 0): return n*factorial(n-1)
+        else: return 1
+
+
+    def poisson(k, lamb):
+        &amp;quot;&amp;quot;&amp;quot;poisson pdf, parameter lamb is the fit parameter&amp;quot;&amp;quot;&amp;quot;
+        return (lamb**k/factorial(k)) * np.exp(-lamb)
+
+    lamb = uni_offers.mean()
+    uni_offers.sort()
+
+    p = [poisson(_, lamb) for _ in range(uni_offers.max()+1)]
+    binboundary = np.array(range(-1,uni_offers.max()+1)) + 0.5
+    plt.hist(uni_offers, bins=binboundary, normed=True, alpha=0.5,histtype=&#39;stepfilled&#39;, color=&#39;steelblue&#39;, edgecolor=&#39;none&#39;);
+    plt.plot(range(uni_offers.max()+1), p, &#39;ro-&#39;, label=&#39;Poiss(%.2f)&#39;%lamb)
+    plt.xlabel(&amp;quot;offers per year&amp;quot;)
+    plt.ylabel(&amp;quot;Arbitrary units&amp;quot;)
+    plt.title(&amp;quot;offers/year to %s postdocs (from 2005-2019)&amp;quot;%uniname)
+    plt.legend()
+    plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let&amp;rsquo;s check for some universities/labs how well (badly) does the Poisson modeling of the offers per year work..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;uninames = [&#39;Columbia&#39;, &#39;FNAL&#39;, &#39;CERN&#39;, &#39;Stony Brook&#39;, &#39;UPenn&#39;]
+[checkmodeling(uniname) for uniname in uninames]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/anaconda3/envs/ML/lib/python3.6/site-packages/ipykernel_launcher.py:32: MatplotlibDeprecationWarning: 
+The &#39;normed&#39; kwarg was deprecated in Matplotlib 2.1 and will be removed in 3.1. Use &#39;density&#39; instead.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_37_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_37_2.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_37_3.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_37_4.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_37_5.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[None, None, None, None, None]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;postdoc-metrics&#34;&gt;Postdoc Metrics&lt;/h2&gt;
+
+&lt;p&gt;We can define individual success of a postdoc using &lt;strong&gt;&lt;em&gt;postdoc metric 1&lt;/em&gt;&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Success odds&lt;/strong&gt; =  $\frac{total\ offers}{total\ rejections}$  (for a postdoc)&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;postdoc metric 2&lt;/em&gt;&lt;/strong&gt; is the binary form of &lt;strong&gt;&lt;em&gt;postdoc metric 1&lt;/em&gt;&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Success&lt;/strong&gt; = 1 if (&lt;strong&gt;success odds&lt;/strong&gt; &amp;gt; 0) else 0&lt;/p&gt;
+
+&lt;p&gt;ie, if a postdoc got at least one job offer, that postdoc is counted as successful.&lt;/p&gt;
+
+&lt;p&gt;Adding &lt;strong&gt;success odds&lt;/strong&gt; to the table:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;ApplicantTableAllYears[&#39;Success odds&#39;] = ApplicantTableAllYears[&#39;Offers&#39;]/(ApplicantTableAllYears[&#39;Attempts&#39;] - ApplicantTableAllYears[&#39;Offers&#39;])
+ApplicantTableAllYears = ApplicantTableAllYears[~ApplicantTableAllYears.isin([np.nan, np.inf, -np.inf]).any(1)]
+ApplicantTableAllYears.head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+      &lt;th&gt;Success&lt;/th&gt;
+      &lt;th&gt;Success odds&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;220&lt;/td&gt;
+      &lt;td&gt;Florencia Canelli&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.875&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;571&lt;/td&gt;
+      &lt;td&gt;Sabine Lammers&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;2.500&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;86&lt;/td&gt;
+      &lt;td&gt;Ben Kilminster&lt;/td&gt;
+      &lt;td&gt;Ohio State&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;115&lt;/td&gt;
+      &lt;td&gt;Carter Hall&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;4.000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;215&lt;/td&gt;
+      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
+      &lt;td&gt;Rochester&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.500&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Checking the distribution of &lt;strong&gt;success odds&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.hist(ApplicantTableAllYears[&#39;Success odds&#39;], bins=20)
+plt.xlabel(&amp;quot;success odds&amp;quot;)
+plt.ylabel(&amp;quot;no. of postdocs&amp;quot;)
+plt.title(&amp;quot;postdocs from all uni/labs included (from 2005-2019)&amp;quot;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_44_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Success odds&lt;/strong&gt; distributions mostly 0 (no offers) and a peak at 1 (no. of offers = no. of rejections) per candidate.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniApplicantTableAllYear = ApplicantTableAllYears.merge(UniversityTableAllYears[[&#39;Affiliation&#39;, &#39;Offers/candidate&#39;, &#39;Total successful candidates&#39;, &#39;Total unsuccessful candidates&#39;]], how=&#39;left&#39;, left_on=&#39;Affiliation&#39;, right_on=&#39;Affiliation&#39;)
+UniApplicantTableAllYear[UniApplicantTableAllYear[&#39;Success&#39;]==0].head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+      &lt;th&gt;Success&lt;/th&gt;
+      &lt;th&gt;Success odds&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+      &lt;th&gt;Total successful candidates&lt;/th&gt;
+      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;191&lt;/td&gt;
+      &lt;td&gt;David Lopes Pegna&lt;/td&gt;
+      &lt;td&gt;Princeton&lt;/td&gt;
+      &lt;td&gt;11&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.0&lt;/td&gt;
+      &lt;td&gt;0.384615&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;192&lt;/td&gt;
+      &lt;td&gt;Sasha Telnov&lt;/td&gt;
+      &lt;td&gt;Princeton&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.0&lt;/td&gt;
+      &lt;td&gt;0.384615&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;193&lt;/td&gt;
+      &lt;td&gt;Christopher Backhouse&lt;/td&gt;
+      &lt;td&gt;Caltech&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.0&lt;/td&gt;
+      &lt;td&gt;0.600000&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;194&lt;/td&gt;
+      &lt;td&gt;Corrinne Mills&lt;/td&gt;
+      &lt;td&gt;Harvard&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.0&lt;/td&gt;
+      &lt;td&gt;0.600000&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;195&lt;/td&gt;
+      &lt;td&gt;Jesse Wodin&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;0.0&lt;/td&gt;
+      &lt;td&gt;0.888889&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;postdoc-metrics-vs-university-metric&#34;&gt;Postdoc metrics vs. university metric&lt;/h2&gt;
+
+&lt;h3 id=&#34;postdoc-metric-1-success-odds-vs-university-metric-offers-candidate&#34;&gt;Postdoc metric 1 (&lt;em&gt;success odds&lt;/em&gt;) vs. university metric (&lt;em&gt;offers/candidate&lt;/em&gt;)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;plt.scatter(UniApplicantTableAllYear[&#39;Offers/candidate&#39;], UniApplicantTableAllYear[&#39;Success odds&#39;], marker = &#39;.&#39;)
+plt.xlabel(&#39;University metric: offers per candidate&#39;)
+plt.ylabel(&#39;Postdoc metric: success odds&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;Text(0, 0.5, &#39;Postdoc metric: success odds&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_49_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Pearson correlation:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;correlation = UniApplicantTableAllYear[[&#39;Offers/candidate&#39;, &#39;Success odds&#39;]]
+correlation.corr()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+      &lt;th&gt;Success odds&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Offers/candidate&lt;/td&gt;
+      &lt;td&gt;1.000000&lt;/td&gt;
+      &lt;td&gt;0.343269&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Success odds&lt;/td&gt;
+      &lt;td&gt;0.343269&lt;/td&gt;
+      &lt;td&gt;1.000000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Since there are other factors contributing to a postdocs success, the variation of the &lt;em&gt;median of&lt;/em&gt; &lt;strong&gt;&lt;em&gt;success odds&lt;/em&gt;&lt;/strong&gt; w.r.t &lt;strong&gt;&lt;em&gt;offers/candidate&lt;/em&gt;&lt;/strong&gt; is useful in understanding the effect of university on postdoc&amp;rsquo;s success.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;bp = UniApplicantTableAllYear.boxplot(column=&#39;Success odds&#39;,by=&#39;Offers/candidate&#39;)
+bp.set_xlabel(&#39;offers per candidate&#39;)
+bp.set_ylabel(&#39;success odds&#39;)
+bp.set_title(&#39;&#39;)
+bp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7f34126a33c8&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_53_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Homoscedasticity doesn&amp;rsquo;t hold very well here&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;x = UniApplicantTableAllYear[&#39;Offers/candidate&#39;].values
+y = UniApplicantTableAllYear[&#39;Success odds&#39;].values
+x = x.reshape(-1, 1)
+y = y.reshape(-1, 1)
+regr = LinearRegression()
+regr.fit(x, y)
+plt.scatter(UniApplicantTableAllYear[&#39;Offers/candidate&#39;],
+            UniApplicantTableAllYear [&#39;Success odds&#39;], alpha=0.5, 
+            color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
+plt.plot(x, regr.predict(x), color=&#39;black&#39;, linewidth=3)
+plt.xlabel(&#39;offers per candidae&#39;)
+plt.ylabel(&#39;success odds&#39;)
+plt.legend()
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_55_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniApplicantTableAllYearLog = UniApplicantTableAllYear
+UniApplicantTableAllYearLog[&#39;Success logit&#39;] = np.log(UniApplicantTableAllYearLog[&#39;Success odds&#39;])
+UniApplicantTableAllYearLog = UniApplicantTableAllYearLog[~UniApplicantTableAllYearLog.isin([np.nan, np.inf, -np.inf]).any(1)]
+UniApplicantTableAllYearLog.head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/.local/lib/python3.6/site-packages/pandas/core/series.py:853: RuntimeWarning: divide by zero encountered in log
+  result = getattr(ufunc, method)(*inputs, **kwargs)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+      &lt;th&gt;Success&lt;/th&gt;
+      &lt;th&gt;Success odds&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+      &lt;th&gt;Total successful candidates&lt;/th&gt;
+      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
+      &lt;th&gt;Success logit&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;Florencia Canelli&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.875&lt;/td&gt;
+      &lt;td&gt;0.909091&lt;/td&gt;
+      &lt;td&gt;41&lt;/td&gt;
+      &lt;td&gt;25&lt;/td&gt;
+      &lt;td&gt;-0.133531&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;Sabine Lammers&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;2.500&lt;/td&gt;
+      &lt;td&gt;1.266667&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;0.916291&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;Ben Kilminster&lt;/td&gt;
+      &lt;td&gt;Ohio State&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1.000&lt;/td&gt;
+      &lt;td&gt;0.900000&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;Carter Hall&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;4.000&lt;/td&gt;
+      &lt;td&gt;0.888889&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;1.386294&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
+      &lt;td&gt;Rochester&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.500&lt;/td&gt;
+      &lt;td&gt;0.857143&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;-0.693147&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;bp = UniApplicantTableAllYearLog.boxplot(column=&#39;Success logit&#39;,by=&#39;Offers/candidate&#39;)
+bp.set_xlabel(&#39;offers per candidate&#39;)
+bp.set_ylabel(&#39;success logit&#39;)
+bp.set_title(&#39;&#39;)
+bp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;matplotlib.axes._subplots.AxesSubplot at 0x7f341284c978&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_57_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Homoscedasticity better with &lt;strong&gt;success logit&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;x = UniApplicantTableAllYearLog[&#39;Offers/candidate&#39;].values
+logy = UniApplicantTableAllYearLog[&#39;Success logit&#39;].values
+x = x.reshape(-1, 1)
+logy = logy.reshape(-1, 1)
+#adding column of 1 to estimate slope and intercept
+UniApplicantTableAllYearLog[&#39;const&#39;] = 1
+
+regrOLSlog = sm.OLS(UniApplicantTableAllYearLog[&#39;Success logit&#39;], 
+                    UniApplicantTableAllYearLog[[&#39;Offers/candidate&#39;, &#39;const&#39;]]).fit()
+
+regrlog = LinearRegression()
+regrlog.fit(x, logy)
+
+plt.scatter(UniApplicantTableAllYearLog[&#39;Offers/candidate&#39;],
+            UniApplicantTableAllYearLog[&#39;Success logit&#39;], alpha=0.5, 
+            color=&#39;blue&#39;, marker=&#39;.&#39;, label=&#39;data&#39;)
+plt.plot(x, regrlog.predict(x), color=&#39;black&#39;, linewidth=3)
+plt.xlabel(&#39;offers per candidate&#39;)
+plt.ylabel(&#39;success logit&#39;)
+plt.legend()
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;/home/sourav/anaconda3/envs/ML/lib/python3.6/site-packages/ipykernel_launcher.py:6: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_59_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;## slope of the regression
+slope = regrlog.coef_[0][0]
+
+## intercept of the regression
+intercept = regrlog.intercept_[0]
+
+## R^2 value
+rsq = regrlog.score(x, logy)
+
+slope, intercept, rsq
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;(0.4155776204426254, -0.8826111233324048, 0.018266248086799997)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;print(regrOLSlog.summary())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:          Success logit   R-squared:                       0.018
+Model:                            OLS   Adj. R-squared:                  0.013
+Method:                 Least Squares   F-statistic:                     3.517
+Date:                Sat, 12 Oct 2019   Prob (F-statistic):             0.0623
+Time:                        08:18:13   Log-Likelihood:                -212.57
+No. Observations:                 191   AIC:                             429.1
+Df Residuals:                     189   BIC:                             435.6
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+====================================================================================
+                       coef    std err          t      P&amp;gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------------
+Offers/candidate     0.4156      0.222      1.875      0.062      -0.022       0.853
+const               -0.8826      0.176     -5.011      0.000      -1.230      -0.535
+==============================================================================
+Omnibus:                        7.067   Durbin-Watson:                   0.269
+Prob(Omnibus):                  0.029   Jarque-Bera (JB):                4.580
+Skew:                          -0.220   Prob(JB):                        0.101
+Kurtosis:                       2.382   Cond. No.                         6.60
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;p-value of 0.062 for the slope of the linear regression suggests that the dependence of &lt;strong&gt;success logit&lt;/strong&gt; on &lt;strong&gt;offers/candidate&lt;/strong&gt; is &lt;strong&gt;&lt;em&gt;NOT&lt;/em&gt;&lt;/strong&gt; &lt;em&gt;statistically significant&lt;/em&gt; with 95% CL. So, the role of university in the success of its postdocs cannot be established with statistical significance using this pair of university and postdoc metrics.&lt;/p&gt;
+
+&lt;h3 id=&#34;postdoc-metric-2-success-vs-university-metric-offers-candidate&#34;&gt;Postdoc metric 2 (&lt;em&gt;success&lt;/em&gt;) vs. university metric (&lt;em&gt;offers/candidate&lt;/em&gt;)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;UniApplicantTableAllYear.head()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div&gt;
+&lt;style scoped&gt;
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+&lt;/style&gt;
+&lt;table border=&#34;1&#34; class=&#34;dataframe&#34;&gt;
+  &lt;thead&gt;
+    &lt;tr style=&#34;text-align: right;&#34;&gt;
+      &lt;th&gt;&lt;/th&gt;
+      &lt;th&gt;Applicant&lt;/th&gt;
+      &lt;th&gt;Affiliation&lt;/th&gt;
+      &lt;th&gt;Attempts&lt;/th&gt;
+      &lt;th&gt;Offers&lt;/th&gt;
+      &lt;th&gt;Success&lt;/th&gt;
+      &lt;th&gt;Success odds&lt;/th&gt;
+      &lt;th&gt;Offers/candidate&lt;/th&gt;
+      &lt;th&gt;Total successful candidates&lt;/th&gt;
+      &lt;th&gt;Total unsuccessful candidates&lt;/th&gt;
+      &lt;th&gt;Success logit&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;Florencia Canelli&lt;/td&gt;
+      &lt;td&gt;FNAL&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.875&lt;/td&gt;
+      &lt;td&gt;0.909091&lt;/td&gt;
+      &lt;td&gt;41&lt;/td&gt;
+      &lt;td&gt;25&lt;/td&gt;
+      &lt;td&gt;-0.133531&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;Sabine Lammers&lt;/td&gt;
+      &lt;td&gt;Columbia&lt;/td&gt;
+      &lt;td&gt;7&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;2.500&lt;/td&gt;
+      &lt;td&gt;1.266667&lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;0.916291&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;Ben Kilminster&lt;/td&gt;
+      &lt;td&gt;Ohio State&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;1.000&lt;/td&gt;
+      &lt;td&gt;0.900000&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;0.000000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;Carter Hall&lt;/td&gt;
+      &lt;td&gt;SLAC&lt;/td&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;4.000&lt;/td&gt;
+      &lt;td&gt;0.888889&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;1.386294&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;Eva Halkiadakis&lt;/td&gt;
+      &lt;td&gt;Rochester&lt;/td&gt;
+      &lt;td&gt;9&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;0.500&lt;/td&gt;
+      &lt;td&gt;0.857143&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;-0.693147&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;t = UniApplicantTableAllYear[[&#39;Offers/candidate&#39;, &#39;Success&#39;]]
+t = t.sort_values(by=[&#39;Offers/candidate&#39;], ascending=False)
+tsuccess = t[t[&#39;Success&#39;] == 1]
+tfailure = t[t[&#39;Success&#39;] == 0]
+
+bins=8
+plt.hist(tsuccess[&#39;Offers/candidate&#39;], bins, alpha=0.3, label=&#39;Success&#39;)
+plt.hist(tfailure[&#39;Offers/candidate&#39;], bins, alpha=0.3, label=&#39;Failure&#39;)
+
+plt.xlabel(&#39;Offers/candidate&#39;)
+plt.ylabel(&#39;no. of postdocs&#39;)
+plt.legend(loc=&#39;best&#39;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_65_0.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;logisticRegr = linear_model.LogisticRegression(C=1e5, solver=&#39;lbfgs&#39;)
+logisticRegr.fit(UniApplicantTableAllYear[[&#39;Offers/candidate&#39;]], UniApplicantTableAllYear[&#39;Success&#39;])
+logisticRegr.score(UniApplicantTableAllYear[[&#39;Offers/candidate&#39;]], UniApplicantTableAllYear[&#39;Success&#39;])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;0.6867030965391621
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;print(logisticRegr.coef_[0][0], logisticRegr.intercept_[0])
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;3.105024677567668 -2.582806084094838
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#xLR = np.arange(UniApplicantTableAllYear[&#39;Offers/candidate&#39;].min(), 
+#          UniApplicantTableAllYear[&#39;Offers/candidate&#39;].max(), 0.01)
+xLR = np.arange(-0.5, 2, 0.01)
+xLR = xLR.reshape(-1,1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from scipy.special import expit
+logistic = expit(xLR * logisticRegr.coef_ + logisticRegr.intercept_).ravel()
+plt.scatter(UniApplicantTableAllYear[&#39;Offers/candidate&#39;], 
+            UniApplicantTableAllYear[&#39;Success&#39;], marker=&#39;.&#39;, alpha = 0.2, color=&#39;green&#39;)
+plt.plot(xLR, logistic, color=&#39;blue&#39;, linewidth=3)
+plt.xlabel(&#39;offers per candidate&#39;)
+plt.ylabel(&#39;success&#39;)
+plt.legend()
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;No handles with labels found to put in legend.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;./PostdocAffiliationSuccessCorrelation_69_1.png&#34; alt=&#34;png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;offers per candidate&lt;/strong&gt; metric is not very good in discriminating postdocs into successful (at least one job offer) and unsuccessful candidates, as the accuracy is ~69%.&lt;/p&gt;
+
+&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Statistically significant relationship between &lt;strong&gt;Offers/candidate&lt;/strong&gt;, the &lt;em&gt;university metric&lt;/em&gt;, and the &lt;em&gt;postdoc metrics&lt;/em&gt; could not be established.&lt;/li&gt;
+&lt;li&gt;We could not establish, with statisical significance, if the affiliation of a experimental high energy physics (hepex) postdoc is an indicator of future success in finding permanent academic position.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;future-steps&#34;&gt;Future steps&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;temporal variations in hep-ex job market not taken into account&lt;/li&gt;
+&lt;li&gt;US and non-US jobs to be treated separately&lt;/li&gt;
+&lt;li&gt;should separate the study into energy, intensity and cosmic frontiers, as the job trends and funding are different for each&lt;/li&gt;
+&lt;li&gt;Look into other indicators of postdoc success like research productivity, etc.
+&amp;mdash;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
