@@ -1,1 +1,1 @@
-This is a personal repo
+This is a personal repository
